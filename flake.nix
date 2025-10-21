@@ -43,6 +43,7 @@
             home-manager.extraSpecialArgs = {
               pkgs = inputs.nixpkgs.legacyPackages.${system};
               inherit inputs;
+              inherit nix-folder;
             };
           }
           #inputs.grub2-themes.nixosModules.default
