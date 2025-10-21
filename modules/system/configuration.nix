@@ -71,8 +71,10 @@
       "quiet"
       "splash"
       #"vga=current"
+      # For vm
       "serial=stdio"
       "display=sdl,gl=on"
+
       "rd.systemd.show_status=false"
       "rd.udev.log_level=3"
       "udev.log_priority=3"
