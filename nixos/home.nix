@@ -32,7 +32,7 @@
       #ai.enable = false;
 
       # wm
-      #hyprland.enable = true;
+      hyprland.enable = true;
 
       # style
       #stylix.enable = true;
