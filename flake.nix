@@ -5,10 +5,10 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     
-    #home-manager = {
-    #  url = "github:nix-community/home-manager/release-25.05";
-    #  inputs.nixpkgs.follows = "nixpkgs";
-    #};
+    home-manager = {
+      url = "github:nix-community/home-manager/release-25.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     #grub2-themes = {
     #  url = "github:vinceliuice/grub2-themes";
@@ -35,15 +35,16 @@
       nixosConfigurations.${hostname} = inputs.nixpkgs.lib.nixosSystem {
         inherit system;
         modules = [
+          { config.networking.hostName = hostname; }
           ./nixos
           ./modules/system
-          #inputs.home-manager.nixosModules.home-manager
-          #{
-          #  home-manager.extraSpecialArgs = {
-          #    pkgs = inputs.nixpkgs.legacyPackages.${system};
-          #    inherit inputs;
-          #  };
-          #}
+          inputs.home-manager.nixosModules.home-manager
+          {
+            home-manager.extraSpecialArgs = {
+              pkgs = inputs.nixpkgs.legacyPackages.${system};
+              inherit inputs;
+            };
+          }
           #inputs.grub2-themes.nixosModules.default
           #inputs.nixos-hardware.nixosModules.${pc}
         ];
