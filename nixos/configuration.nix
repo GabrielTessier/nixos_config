@@ -5,9 +5,9 @@
       adminUsers = [ "gabriel" ];
     };
     users.users.gabriel.description = "gabriel";
-    #home-manager.users.gabriel.userSettings = {
-    #  name = "gabriel";
-    #  email = "EMAIL";
-    #};
+    home-manager.users.gabriel.userSettings = {
+      name = "gabriel";
+      email = "EMAIL";
+    };
   };
 }

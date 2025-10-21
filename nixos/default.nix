@@ -6,8 +6,11 @@
   ];
 
   #config = {
-    
-  #};
+    home-manager.users = builtins.listToAttrs
+      (map (user: { name = user; value = 
+                      ({ imports = [ ./home.nix ../modules/user ]; });}) config.systemSettings.users);
+  #  };
+
 
   #virtualisation.vmVariant = {
   #  virtualisation = {
@@ -16,8 +19,5 @@
       #graphics = false;
   #  };
   #};
-  networking.hostName = hostname; # Define your hostname.
   console.keyMap = lib.mkForce "fr";
-  nix.settings.experimental-features = [ "nix-command" "flakes" ]; # Enabling flakes
-  system.stateVersion = "25.05"; # Don't change it bro
 }
