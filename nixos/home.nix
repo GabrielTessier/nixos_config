@@ -4,11 +4,11 @@
   config = {
     userSettings = {
       # setup
-      #shell = {
-      #  enable = true;
+      shell = {
+        enable = true;
       #  apps.enable = true;
       #  extraApps.enable = true;
-      #};
+      };
       #xdg.enable = true;
 
       # programs
