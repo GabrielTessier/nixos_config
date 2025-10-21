@@ -23,8 +23,7 @@
 
     let
       # Change to suit your config
-      hostname = "nixos";
-      username = "gabriel";
+      hostname = "newnixos";
       nix-folder = "/home/gabriel/new_nix";
       # add your model from this list: https://github.com/NixOS/nixos-hardware/blob/master/flake.nix
       pc = "dell-inspiron-14-5420";
@@ -37,24 +36,22 @@
         inherit system;
         modules = [
           ./nixos
+          ./modules/system
+          #inputs.home-manager.nixosModules.home-manager
+          #{
+          #  home-manager.extraSpecialArgs = {
+          #    pkgs = inputs.nixpkgs.legacyPackages.${system};
+          #    inherit inputs;
+          #  };
+          #}
           #inputs.grub2-themes.nixosModules.default
           #inputs.nixos-hardware.nixosModules.${pc}
         ];
         specialArgs = {
           inherit inputs;
-          inherit username;
           inherit hostname;
         };
       };
-      
-     # homeConfigurations.${username} = inputs.home-manager.lib.homeManagerConfiguration {
-     #   pkgs = inputs.nixpkgs.legacyPackages.${system};
-     #   modules = [ ./home-manager/home.nix ];
-     #   extraSpecialArgs = {
-     #     inherit username;
-     #     inherit nix-folder;
-     #   };
-     # };
     };
 }
   
