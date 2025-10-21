@@ -23,7 +23,7 @@
 
     let
       # Change to suit your config
-      hostname = "newnixos";
+      hostname = "nixos";
       nix-folder = "/home/gabriel/new_nix";
       # add your model from this list: https://github.com/NixOS/nixos-hardware/blob/master/flake.nix
       pc = "dell-inspiron-14-5420";

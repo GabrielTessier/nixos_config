@@ -70,7 +70,9 @@
     boot.kernelParams = [
       "quiet"
       "splash"
-      "vga=current"
+      #"vga=current"
+      "serial=stdio"
+      "display=sdl,gl=on"
       "rd.systemd.show_status=false"
       "rd.udev.log_level=3"
       "udev.log_priority=3"
