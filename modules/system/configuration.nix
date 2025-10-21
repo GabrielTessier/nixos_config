@@ -70,10 +70,10 @@
     boot.kernelParams = [
       "quiet"
       "splash"
-      #"vga=current"
+      "vga=current"
       # For vm
-      "serial=stdio"
-      "display=sdl,gl=on"
+      #"serial=stdio"
+      #"display=sdl,gl=on"
 
       "rd.systemd.show_status=false"
       "rd.udev.log_level=3"
