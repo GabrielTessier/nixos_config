@@ -42,31 +42,31 @@ in
       enable = true;
       extraPortals = with pkgs;
       [
-        xdg-desktop-portal-wlr
-        xdg-desktop-portal-termfilechooser
+        #xdg-desktop-portal-wlr
+        #xdg-desktop-portal-termfilechooser
       ];
     };
     
-    xdg.portal.config.common = {
-      default = [ "hyprland" ];
-      "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
-    };
-    xdg.portal.config.hyprland = {
-      default = [ "hyprland" ];
-      "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
-    };
+    #xdg.portal.config.common = {
+    #  default = [ "hyprland" ];
+    #  "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+    #};
+    #xdg.portal.config.hyprland = {
+    #  default = [ "hyprland" ];
+    #  "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
+    #};
     
     home.sessionVariables.TERMCMD = "kitty --class=filechoose_yazi";
     
-    xdg.configFile."xdg-desktop-portal-termfilechooser/config" =
-    {
-      force = true;
-      text =
-      ''
-        [filechooser]
-        cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
-      '';
-    };
+    #xdg.configFile."xdg-desktop-portal-termfilechooser/config" =
+    #{
+    #  force = true;
+    #  text =
+    #  ''
+    #    [filechooser]
+    #    cmd=${pkgs.xdg-desktop-portal-termfilechooser}/share/xdg-desktop-portal-termfilechooser/yazi-wrapper.sh
+    #  '';
+    #};
 
     gtk.cursorTheme = {
       package = pkgs.bibata-cursors;
@@ -106,15 +106,15 @@ in
           #no_cursor_warps = false;
         };
 
-        group = {
-          "col.border_active" = config.wayland.windowManager.hyprland.settings.general."col.active_border";
-          "col.border_inactive" = config.wayland.windowManager.hyprland.settings.general."col.inactive_border";
-          groupbar = {
-            gradients = false;
-            #"col.active" = "0xff${config.lib.stylix.colors.base0B}";
-            #"col.inactive" = "0xff${config.lib.stylix.colors.base02}";
-          };
-        };
+        #group = {
+        #  "col.border_active" = config.wayland.windowManager.hyprland.settings.general."col.active_border";
+        #  "col.border_inactive" = config.wayland.windowManager.hyprland.settings.general."col.inactive_border";
+        #  groupbar = {
+        #    gradients = false;
+        #    #"col.active" = "0xff${config.lib.stylix.colors.base0B}";
+        #    #"col.inactive" = "0xff${config.lib.stylix.colors.base02}";
+        #  };
+        #};
 
         decoration = {
           rounding = 10;
@@ -305,12 +305,12 @@ in
     };
 
     home.packages = (with pkgs; [
-      networkmanagerapplet
-      hyprland-monitor-attached
+      #networkmanagerapplet
+      #hyprland-monitor-attached
       #alacritty
       kitty
       killall
-      polkit_gnome
+      #polkit_gnome
       wl-clipboard
       hyprland-protocols
       #inputs.hyprlock.packages.${pkgs.system}.default

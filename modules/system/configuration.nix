@@ -31,29 +31,7 @@
     environment.shells = with pkgs; [ zsh ];
     users.defaultUserShell = pkgs.zsh;
 
-    # Fix nix path
-    #nix.nixPath = [ "nixpkgs=/nix/var/nix/profiles/per-user/root/channels/nixos"
-    #                "nixos-config=$HOME/dotfiles/system/configuration.nix"
-    #                "/nix/var/nix/profiles/per-user/root/channels"
-    #              ];
-
-    # Ensure nix flakes are enabled
-    #nix.extraOptions = ''
-    #  experimental-features = nix-command flakes
-    #'';
     nix.settings.experimental-features = [ "nix-command" "flakes" ];
-
-    # Substituters
-    #nix.settings = {
-    #  substituters = [
-    #    "https://cache.nixos.org"
-    #    "https://nix-community.cachix.org"
-    #  ];
-    #  trusted-public-keys = [
-    #    "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    #    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    #  ];
-    #};
 
     # wheel group gets trusted access to nix daemon
     nix.settings.trusted-users = [ "@wheel" ];
@@ -70,7 +48,7 @@
     boot.kernelParams = [
       "quiet"
       "splash"
-      "vga=current"
+      #"vga=current"
       # For vm
       #"serial=stdio"
       #"display=sdl,gl=on"
@@ -79,9 +57,9 @@
       "rd.udev.log_level=3"
       "udev.log_priority=3"
     ];
-    boot.initrd.systemd.enable = true;
-    boot.initrd.verbose = false;
-    boot.plymouth.enable = true;
+    #boot.initrd.systemd.enable = true;
+    #boot.initrd.verbose = false;
+    #boot.plymouth.enable = true;
 
     # Networking
     networking.networkmanager.enable = true; # Use networkmanager
