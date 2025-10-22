@@ -24,6 +24,7 @@
     let
       # Change to suit your config
       hostname = "nixos";
+      usernames = [ "gabriel" ];
       nix-folder = "/home/gabriel/new_nix";
       # add your model from this list: https://github.com/NixOS/nixos-hardware/blob/master/flake.nix
       pc = "dell-inspiron-14-5420";
@@ -36,22 +37,44 @@
         inherit system;
         modules = [
           { config.networking.hostName = hostname; }
+          { config.systemSettings.users = usernames; }
           ./nixos
           ./modules/system
-          inputs.home-manager.nixosModules.home-manager
-          {
-            home-manager.extraSpecialArgs = {
-              pkgs = inputs.nixpkgs.legacyPackages.${system};
-              inherit inputs;
-              inherit nix-folder;
-            };
-          }
           #inputs.grub2-themes.nixosModules.default
           #inputs.nixos-hardware.nixosModules.${pc}
         ];
         specialArgs = {
           inherit inputs;
           inherit hostname;
+        };
+      };
+
+      #homeConfigurations = builtins.listToAttrs
+      #  (map (username: {
+      #    name = username;
+      #    value = inputs.lib.nixosSystem {
+      #      inputs.home-manager.lib.homeManagerConfiguration = {
+      #        pkgs = inputs.nixpkgs.legacyPackages.${system};
+      #        modules = [
+      #          ./modules/user
+      #          ./nixos/home/${username}.nix
+      #        ];
+      #        extraSpecialArgs = {
+      #          inherit username;
+      #          inherit nix-folder;
+      #        };
+      #      };
+      #    };
+      #  }) usernames);
+      homeConfigurations.gabriel = inputs.home-manager.lib.homeManagerConfiguration {
+        pkgs = inputs.nixpkgs.legacyPackages.${system};
+        modules = [
+          ./modules/user
+          ./nixos/home/gabriel.nix
+        ];
+        extraSpecialArgs = {
+          username = "gabriel";
+          inherit nix-folder;
         };
       };
     };
