@@ -5,12 +5,13 @@
     ./hardware-configuration.nix
   ];
 
-  virtualisation.vmVariant = {
-    virtualisation = {
-      memorySize = 8*1024; # Use 2048MiB memory.
-      cores = 4;
-      #graphics = false;
-    };
-  };
+    home-manager.users = builtins.listToAttrs
+      (map (user : {
+        name = user;
+        value = ({
+          imports = [ ./home.nix ../modules/user ];
+        });
+      }) config.systemSettings.users);
+
   console.keyMap = lib.mkForce "fr";
 }

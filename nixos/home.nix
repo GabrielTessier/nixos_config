@@ -13,10 +13,10 @@
 
       # programs
       #browser = "brave";
-      #editor = "emacs";
+      editor = "vim";
       #vscodium.enable = true;
       #yazi.enable = true;
-      #git.enable = true;
+      git.enable = true;
       #engineering.enable = false;
       #art.enable = false;
       #flatpak.enable = false;
@@ -30,6 +30,14 @@
       #  virtualMachines.enable = false;
       #};
       #ai.enable = false;
+
+      gpg = {
+        enable = true;
+        signGit = {
+          enable = true;
+          signKey = "51868780DE33CB95";
+        };
+      };
 
       # wm
       hyprland.enable = true;
