@@ -19,6 +19,6 @@ in {
     programs.gpg.enable = true;
     services.gpg-agent.enable = true;
     programs.git.extraConfig.user.signingKey = lib.mkIf (cfg.signGit.enable) cfg.signGit.signKey;
-    programs.git.extraConfig.commit.gpgsign = cfg.signGit;
+    programs.git.extraConfig.commit.gpgsign = cfg.signGit.enable;
   };
 }
