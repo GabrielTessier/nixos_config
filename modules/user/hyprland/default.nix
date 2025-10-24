@@ -81,6 +81,8 @@ in
       plugins = [ ];
       settings = {
         "$mainMod" = "SUPER";
+
+        monitor = "eDP-1,1920x1200,auto,1";
         
         env = [
           #"AQ_DRM_DEVICES,${config.home.sessionVariables.AQ_DRM_DEVICES}"
@@ -174,6 +176,14 @@ in
           };
 
           sensitivity = 0; # -1.0 - 1.0, 0 means no modification.
+        };
+
+        gestures = {
+          workspace_swipe = true;
+          workspace_swipe_fingers = 3;
+          workspace_swipe_invert = true;
+          workspace_swipe_distance = 200;
+          workspace_swipe_forever = true;
         };
 
         bind = [
