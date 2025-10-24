@@ -37,30 +37,18 @@
     nix.settings.trusted-users = [ "@wheel" ];
 
     # Bootloader
-    # Use systemd-boot if uefi, default to grub otherwise
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.systemd-boot.editor = false;
-    boot.loader.efi.canTouchEfiVariables = true;
-    boot.loader.efi.efiSysMountPoint = "/boot";
-
-    # Silent Boot
-    # https://wiki.archlinux.org/title/Silent_boot
-    boot.kernelParams = [
-      "quiet"
-      "splash"
-      #"vga=current"
-      # For vm
-      #"serial=stdio"
-      #"display=sdl,gl=on"
-
-      "rd.systemd.show_status=false"
-      "rd.udev.log_level=3"
-      "udev.log_priority=3"
-    ];
-    #boot.initrd.systemd.enable = true;
-    #boot.initrd.verbose = false;
-    #boot.plymouth.enable = true;
-
+    boot.loader = {
+      efi = {
+        canTouchEfiVariables = true;
+        efiSysMountPoint = "/boot";
+      };
+      grub = {
+        efiSupport = true;
+	enable = true;
+	device = "nodev";
+      };
+    };
+    
     # Networking
     networking.networkmanager.enable = true; # Use networkmanager
 
