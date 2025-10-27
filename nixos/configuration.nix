@@ -5,10 +5,10 @@
       adminUsers = [ "gabriel" ];
       gpg.enable = true;
       hyprland.enable = true;
+      waybar.enable = true;
       c.enable = true;
       emacs.enable = true;
     };
-    programs.waybar.enable = true;
     users.users.gabriel.description = "gabriel";
     home-manager.users.gabriel.userSettings = {
       name = "Gabriel TESSIER";
