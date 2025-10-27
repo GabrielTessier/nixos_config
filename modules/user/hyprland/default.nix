@@ -92,11 +92,12 @@ in
           "hyprctl setcursor ${config.gtk.cursorTheme.name} ${builtins.toString config.gtk.cursorTheme.size}"
           "hyprpaper"
           "swaync"
-          #"waybar" # start by systemd
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
-          "udiskie --tray" 
-        ] ++ lib.optionals config.userSettings.emacs.enable ["emacs --daemon"];
+          "udiskie --tray "
+        ]
+        ++ lib.optionals config.userSettings.emacs.enable ["emacs --daemon"]
+        ++ lib.optionals config.userSettings.waybar.enable ["waybar"];
 
 
         general = {
@@ -333,6 +334,8 @@ in
       slurp
       pavucontrol
       bibata-cursors
+      swaynotificationcenter
+      brightnessctl
     ]);
     services.hyprpolkitagent.enable = true;
     services.udiskie.enable = true;
