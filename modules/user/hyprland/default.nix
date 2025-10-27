@@ -95,8 +95,9 @@ in
           #"waybar" # start by systemd
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
-          "udiskie --tray"
-        ];
+          "udiskie --tray" 
+        ] ++ lib.optionals config.userSettings.emacs.enable ["emacs --daemon"];
+
 
         general = {
           gaps_in = 5;
