@@ -5,6 +5,7 @@
       adminUsers = [ "gabriel" ];
       gpg.enable = true;
       hyprland.enable = true;
+      c.enable = true;
       emacs.enable = true;
     };
     programs.waybar.enable = true;
