@@ -254,7 +254,10 @@ in
           #''$mainMod SHIFT, C, exec, alacritty -e sh -c "conf"''
           #''$mainMod SHIFT, H, exec, alacritty -e sh -c "nvim ~/nix/home-manager/modules/wms/hyprland.nix"''
           #''$mainMod SHIFT, W, exec, alacritty -e sh -c "nvim ~/nix/home-manager/modules/wms/waybar.nix''
+
+          # Screenshot
           '', Print, exec, grim -g "$(slurp)" - | swappy -f -''
+          ''$mainMod SHIFT, S, exec, grim -g "$(slurp)" - | swappy -f -''
 
           # Waybar
           #"$mainMod, B, exec, pkill -SIGUSR1 waybar"
@@ -325,14 +328,19 @@ in
       #polkit_gnome
       wl-clipboard
       hyprland-protocols
-      #inputs.hyprlock.packages.${pkgs.system}.default
       hyprlock
       hypridle
       hyprpaper
+
+      # audio
       pamixer
+      pavucontrol
+
+      # screenshot
       grim
       slurp
-      pavucontrol
+      swappy
+      
       bibata-cursors
       swaynotificationcenter
       brightnessctl
