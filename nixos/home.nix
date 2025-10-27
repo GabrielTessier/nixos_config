@@ -41,6 +41,7 @@
 
       # wm
       hyprland.enable = true;
+      waybar.enable = true;
 
       # style
       #stylix.enable = true;
