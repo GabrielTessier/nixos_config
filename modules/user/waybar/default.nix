@@ -134,7 +134,7 @@ in
           };
 
           "cpu" = {
-            interval = 2;
+            interval = 3;
             format = "{usage}% ";
             min-length = 6;
           };
