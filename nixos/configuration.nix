@@ -6,6 +6,7 @@
       gpg.enable = true;
       hyprland.enable = true;
     };
+    programs.waybar.enable = true;
     users.users.gabriel.description = "gabriel";
     home-manager.users.gabriel.userSettings = {
       name = "Gabriel TESSIER";
