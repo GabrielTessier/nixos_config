@@ -92,7 +92,7 @@ in
           "hyprctl setcursor ${config.gtk.cursorTheme.name} ${builtins.toString config.gtk.cursorTheme.size}"
           "hyprpaper"
           "swaync"
-          "waybar"
+          #"waybar" # start by systemd
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
           "udiskie --tray"
@@ -327,6 +327,7 @@ in
       hyprlock
       hypridle
       hyprpaper
+      pamixer
       grim
       slurp
       pavucontrol
