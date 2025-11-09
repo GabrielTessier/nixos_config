@@ -1,7 +1,7 @@
 
 # A faire
 - bluetooth
-- config waync (lib.optionals in hyprland exec-once)
+- config swaync (lib.optionals in hyprland exec-once)
 - wlogout
 - thunderbird
 - discord
