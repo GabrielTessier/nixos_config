@@ -11,10 +11,10 @@
       };
       #xdg.enable = true;
 
-      # programs
-      #browser = "brave";
-      editor = "emacs";
-      emacs.enable = true;
+      # PROGRAMS
+      defaultBrowser = "firefox";
+      editor = "emacs"; # default editor
+      vim.enable = true; # other editor
       #vscodium.enable = true;
       #yazi.enable = true;
       git.enable = true;
@@ -31,7 +31,7 @@
       #  virtualMachines.enable = false;
       #};
       #ai.enable = false;
-
+      
       gpg = {
         enable = true;
         signGit = {
