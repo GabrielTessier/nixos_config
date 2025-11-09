@@ -46,8 +46,13 @@
       };
       grub = {
         efiSupport = true;
-	enable = true;
-	device = "nodev";
+        enable = true;
+        device = "nodev";
+      };
+      grub2-theme = {
+        enable = true;
+        theme = "whitesur";
+        footer = true;
       };
     };
     
