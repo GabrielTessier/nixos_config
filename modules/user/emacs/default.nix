@@ -15,10 +15,9 @@ in
       source = ./conf_file;
     };
     
-	  programs.emacs =
-      {
-		    enable = true;
-		    extraConfig = ''(load-file (expand-file-name "conf_file/init.el" user-emacs-directory))'';
-      };
+	  programs.emacs = {
+		  enable = true;
+		  extraConfig = ''(load-file (expand-file-name "conf_file/init.el" user-emacs-directory))'';
+    };
   };
 }
