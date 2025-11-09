@@ -12,9 +12,9 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
-    #grub2-themes = {
-    #  url = "github:vinceliuice/grub2-themes";
-    #};
+    grub2-themes = {
+      url = "github:vinceliuice/grub2-themes";
+    };
   };
   
   outputs = inputs@{ self, ... }:
@@ -45,7 +45,7 @@
                 };
               }
               
-              #inputs.grub2-themes.nixosModules.default
+              inputs.grub2-themes.nixosModules.default
             ];
             specialArgs = {
               inherit inputs;
