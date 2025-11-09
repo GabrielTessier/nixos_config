@@ -1,7 +1,19 @@
-{ config, lib, pkgs, ...}: {
+{ config, lib, pkgs, ...}:
+let
+  users = builtins.filter (x: x != null) (lib.mapAttrsToList (name: value:
+    if (value == "regular") then
+      let
+        baseName = lib.splitString "." name;
+      in
+        lib.head baseName
+    else
+      null
+  ) (builtins.readDir ./users));
+in
+{
   config = {
     systemSettings = {
-      users = [ "gabriel" ];
+      users = users;
       adminUsers = [ "gabriel" ];
       gpg.enable = true;
       hyprland.enable = true;
@@ -9,10 +21,17 @@
       c.enable = true;
       emacs.enable = true;
     };
+    
     users.users.gabriel.description = "gabriel";
     home-manager.users.gabriel.userSettings = {
       name = "Gabriel TESSIER";
       email = "gabriel.tessier45@gmail.com";
+    };
+
+    users.users.toto.description = "toto";
+    home-manager.users.toto.userSettings = {
+      name = "Toto";
+      email = "";
     };
 
     boot.loader.grub.extraEntries = ''
