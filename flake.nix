@@ -18,39 +18,41 @@
   };
   
   outputs = inputs@{ self, ... }:
-  let
-    # Change to suit your config
-    hostname = "nixos";
-    #usernames = [ "gabriel" ];
-    nix-folder = "/etc/nixos/new_nix";
-    
-    system = "x86_64-linux";
-  in {
-    nixosConfigurations.${hostname} = inputs.nixpkgs.lib.nixosSystem {
-      inherit system;
-      modules = [
-        { config.networking.hostName = hostname; }
-        #{ config.systemSettings.users = usernames; }
-        
-        inputs.nixos-facter-modules.nixosModules.facter
-        { config.facter.reportPath = ./facter.json; }
-        
-        inputs.home-manager.nixosModules.home-manager {
-          home-manager.extraSpecialArgs = {
-            inherit inputs;
-            inherit nix-folder;
+    let
+      nix-folder = "/etc/nixos/new_nix";
+      system = "x86_64-linux";
+
+      lib = inputs.nixpkgs.lib;
+      hosts = builtins.filter (x: x != null) (lib.mapAttrsToList (name: value: if (value == "directory") then name else null) (builtins.readDir ./hosts));
+    in {
+      nixosConfigurations = builtins.listToAttrs
+        (map (host: {
+          name = host;
+          value = inputs.nixpkgs.lib.nixosSystem {
+            inherit system;
+            modules = [
+              { config.networking.hostName = host; }
+              (./hosts + "/${host}")
+              ./modules/system
+              
+              inputs.nixos-facter-modules.nixosModules.facter
+              { config.facter.reportPath = ./facter.json; }
+              
+              inputs.home-manager.nixosModules.home-manager {
+                home-manager.extraSpecialArgs = {
+                  inherit inputs;
+                  inherit nix-folder;
+                };
+              }
+              
+              #inputs.grub2-themes.nixosModules.default
+            ];
+            specialArgs = {
+              inherit inputs;
+              hostname = host;
+            };
           };
-        }
-        ./nixos
-        ./modules/system
-        
-        #inputs.grub2-themes.nixosModules.default
-      ];
-      specialArgs = {
-        inherit inputs;
-        inherit hostname;
-      };
+        }) hosts);
     };
-  };
 }
   

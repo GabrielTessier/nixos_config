@@ -9,7 +9,7 @@
       (map (user : {
         name = user;
         value = ({
-          imports = [ ./home.nix ../modules/user ];
+          imports = [ ./home.nix ../../modules/user ];
         });
       }) config.systemSettings.users);
 
