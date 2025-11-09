@@ -5,6 +5,7 @@ let
   term = config.userSettings.terminal;
   spawnEditor = config.userSettings.spawnEditor;
   spawnBrowser = config.userSettings.spawnBrowser;
+  spawnBrowserPrivate = config.userSettings.spawnBrowserPrivate;
 in
 {
   options = {
@@ -188,6 +189,11 @@ in
           workspace_swipe_forever = true;
         };
 
+        dwindle = {
+          pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below
+          preserve_split = true; # Allow tooglesplit
+        };
+
         bind = [
           "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
 
@@ -196,18 +202,15 @@ in
 	        "$mainMod, L, exec, hyprlock"
 
           "$mainMod, Return, exec, kitty"
-	        "$mainMod, B, exec, firefox"
-	        "$mainMod, N, exec, firefox --private-window"
           "$mainMod, Q, killactive,"
           #"$mainMod, M, exit,"
-          "$mainMod, E, exec, dolphin"
 	        "$mainMod CTRL, E, exec, rofi -modi emoji -show emoji -kb-secondary-copy \"\" -kb-custom-1 Ctrl+c"
           "$mainMod, F, fullscreen, 0"
 	        "$mainMod, M, fullscreen, 1"
 	        "$mainMod, T, togglefloating,"
           "$mainMod CTRL, RETURN, exec, pkill wofi || wofi --show drun"
-          "$mainMod, P, pseudo, # dwindle"
-          "$mainMod, J, togglesplit, # dwindle"
+          "$mainMod, P, pseudo, #dwindle"
+          "$mainMod, J, togglesplit, #dwindle"
 
           # Move focus with mainMod + arrow keys
           "$mainMod, left,  movefocus, l"
@@ -266,6 +269,13 @@ in
 	        # Power Button
 	        #", XF86PowerOff, exit,"
 	        "$mainMod SHIFT, Q, exit,"
+        ]
+        ++ lib.optionals (spawnBrowser != "") [
+          "$mainMod, B, exec, ${spawnBrowser}"
+	        "$mainMod, N, exec, ${spawnBrowserPrivate}"
+        ]
+        ++ lib.optionals (spawnEditor != "") [
+          "$mainMod, E, exec, ${spawnEditor}"
         ]
         ++ (
           # workspaces
