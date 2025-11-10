@@ -196,8 +196,6 @@ in
         bind = [
           "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
 
-          "$mainMod CTRL, Q, exec, pkill wlogout || wlogout"
-          ", XF86PowerOff, exec, pkill wlogout || wlogout"
 	        "$mainMod, L, exec, hyprlock"
 
           "$mainMod, Return, exec, ${terminal}"
@@ -275,6 +273,10 @@ in
         ]
         ++ lib.optionals (spawnEditor != "") [
           "$mainMod, E, exec, ${spawnEditor}"
+        ]
+        ++ lib.optionals (config.userSettings.wlogout.enable) [
+          "$mainMod CTRL, Q, exec, pkill wlogout || wlogout"
+          ", XF86PowerOff, exec, pkill wlogout || wlogout"
         ]
         ++ (
           # workspaces
