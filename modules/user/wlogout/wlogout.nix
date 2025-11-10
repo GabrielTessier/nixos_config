@@ -1,6 +1,9 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, hostname, ... }:
 let
   cfg = config.userSettings.wlogout;
+  
+  user = config.userSettings.name;
+  wallpaper = ../../../hosts/${hostname}/users/${user}/wallpaper;
 in
 {
   options = {
@@ -13,6 +16,10 @@ in
     # Utilisation de home-manager pour copier les icons
     home.file.".config/wlogout/icons" = {
       source = ./icons;
+    };
+
+    home.file.".config/wlogout/wallpaper" = {
+      source = wallpaper;
     };
     
     programs.wlogout = {
