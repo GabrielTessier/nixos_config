@@ -22,14 +22,19 @@ in
         xwayland = {
           enable = true;
         };
-        portalPackage = pkgs.xdg-desktop-portal-hyprland;
+        #portalPackage = pkgs.xdg-desktop-portal-hyprland;
       };
     };
 
     # Necessary packages
     environment.systemPackages = with pkgs; [
+      xdg-desktop-portal-hyprland
+      xdg-desktop-portal-gtk
+      udiskie
       jq
     ];
+
+    services.udisks2.enable = true;
 
     services.upower.enable = true;
 
