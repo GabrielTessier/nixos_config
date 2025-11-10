@@ -10,6 +10,7 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    userSettings.swaync.enable = true;
     programs.waybar = {
       enable = true;
       style = ./style.css;
