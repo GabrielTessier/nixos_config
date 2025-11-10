@@ -1,11 +1,8 @@
 { config, lib, pkgs, ...}:
 let
   users = builtins.filter (x: x != null) (lib.mapAttrsToList (name: value:
-    if (value == "regular") then
-      let
-        baseName = lib.splitString "." name;
-      in
-        lib.head baseName
+    if (value == "directory") then
+      name
     else
       null
   ) (builtins.readDir ./users));

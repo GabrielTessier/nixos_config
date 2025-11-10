@@ -1,4 +1,4 @@
-{ inputs, config, lib, pkgs, hostname, ...}:
+{ config, lib, ... }:
 {
   imports = [
     ./configuration.nix
@@ -9,10 +9,12 @@
     (map (user : {
       name = user;
       value = ({
+        config.userSettings.name = lib.mkForce user;
         imports = [
-          (./users + "/${user}.nix")
-          (inputs.import-tree ../../modules/user)
+          (./users + "/${user}")
+          (../../modules/user)
         ];
+        
       });
     }) config.systemSettings.users);
   

@@ -3,7 +3,7 @@
 {
   config = {
     userSettings = {
-      name = "Gabriel TESSIER";
+      fullname = "Gabriel TESSIER";
       email = "gabriel.tessier45@gmail.com";
 
       # setup

@@ -2,7 +2,7 @@
 {
   config = {
     userSettings = {
-      name = "Titi";
+      fullname = "Titi";
       email = "";
     
       # setup
