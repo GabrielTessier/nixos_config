@@ -35,8 +35,6 @@ in
       #GRIM_DEFAULT_DIR = config.xdg.userDirs.extraConfig.XDG_SCREENSHOT_DIR;
     };
 
-    home.file."wallpaper".source = ./wallpaper;
-
     xdg.portal =
     {
       enable = true;

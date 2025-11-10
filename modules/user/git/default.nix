@@ -15,7 +15,7 @@ in {
     ];
     programs.git = {
       enable = true;
-      userName = config.userSettings.name;
+      userName = config.userSettings.fullname;
       userEmail = config.userSettings.email;
       ignores = [
         "*~"
