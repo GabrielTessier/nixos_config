@@ -39,6 +39,21 @@
         "type": "github"
       }
     },
+    "import-tree": {
+      "locked": {
+        "lastModified": 1762327901,
+        "narHash": "sha256-AJ96FNj50DU0bTyIzAPkPOjCZTHqjURVjok8qoXvmqM=",
+        "owner": "vic",
+        "repo": "import-tree",
+        "rev": "90fa129798be99cde036b78658e89475710966a1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "vic",
+        "repo": "import-tree",
+        "type": "github"
+      }
+    },
     "nixos-facter-modules": {
       "locked": {
         "lastModified": 1762264948,
@@ -106,6 +121,7 @@
       "inputs": {
         "grub2-themes": "grub2-themes",
         "home-manager": "home-manager",
+        "import-tree": "import-tree",
         "nixos-facter-modules": "nixos-facter-modules",
         "nixpkgs": "nixpkgs_2",
         "nixpkgs-unstable": "nixpkgs-unstable"
