@@ -20,6 +20,7 @@ in
       waybar.enable = true;
       c.enable = true;
       emacs.enable = true;
+      bluetooth.enable = true;
     };
 
     system.activationScripts.nixosBuildLog = {

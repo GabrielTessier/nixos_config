@@ -1,6 +1,5 @@
 
 # A faire
-- bluetooth
 - config swaync (lib.optionals in hyprland exec-once)
 - wlogout
 - thunderbird
