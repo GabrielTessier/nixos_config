@@ -44,6 +44,7 @@
                 home-manager.extraSpecialArgs = {
                   inherit inputs;
                   inherit nix-folder;
+                  hostname = host;
                 };
               }
               
