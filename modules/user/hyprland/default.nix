@@ -2,7 +2,7 @@
 let
   cfg = config.userSettings.hyprland;
   #font = config.stylix.fonts.monospace.name;
-  term = config.userSettings.terminal;
+  terminal = config.userSettings.terminal;
   spawnEditor = config.userSettings.spawnEditor;
   spawnBrowser = config.userSettings.spawnBrowser;
   spawnBrowserPrivate = config.userSettings.spawnBrowserPrivate;
@@ -15,7 +15,6 @@ in
   };
 
   config = lib.mkIf cfg.enable {
-    userSettings.kitty.enable = true;
     home.sessionVariables = {
       NIXOS_OZONE_WL = 1;
       ELECTRON_OZONE_PLATFORM_HINT = "wayland";
@@ -57,7 +56,7 @@ in
     #  "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
     #};
     
-    home.sessionVariables.TERMCMD = "kitty --class=filechoose_yazi";
+    #home.sessionVariables.TERMCMD = "kitty --class=filechoose_yazi";
     
     #xdg.configFile."xdg-desktop-portal-termfilechooser/config" =
     #{
@@ -92,13 +91,13 @@ in
         exec-once = [
           "hyprctl setcursor ${config.gtk.cursorTheme.name} ${builtins.toString config.gtk.cursorTheme.size}"
           "hyprpaper"
-          "swaync"
           "wl-paste --type text --watch cliphist store"
           "wl-paste --type image --watch cliphist store"
           "udiskie --tray "
         ]
         ++ lib.optionals config.userSettings.emacs.enable ["emacs --daemon"]
-        ++ lib.optionals config.userSettings.waybar.enable ["waybar"];
+        ++ lib.optionals config.userSettings.waybar.enable ["waybar"]
+        ++ lib.optionals config.userSettings.swaync.enable ["swaync"];
 
 
         general = {
@@ -201,7 +200,7 @@ in
           ", XF86PowerOff, exec, pkill wlogout || wlogout"
 	        "$mainMod, L, exec, hyprlock"
 
-          "$mainMod, Return, exec, kitty"
+          "$mainMod, Return, exec, ${terminal}"
           "$mainMod, Q, killactive,"
           #"$mainMod, M, exit,"
 	        "$mainMod CTRL, E, exec, rofi -modi emoji -show emoji -kb-secondary-copy \"\" -kb-custom-1 Ctrl+c"
@@ -330,10 +329,6 @@ in
     };
 
     home.packages = (with pkgs; [
-      #networkmanagerapplet
-      #hyprland-monitor-attached
-      #alacritty
-      kitty
       killall
       #polkit_gnome
       wl-clipboard
@@ -352,7 +347,6 @@ in
       swappy
       
       bibata-cursors
-      swaynotificationcenter
       brightnessctl
     ]);
     services.hyprpolkitagent.enable = true;
