@@ -14,7 +14,7 @@ in
       enable = true;
       style = ./style.css;
       settings = {
-        "$schema" = "/etc/nixox/new_nix/modules/user/swaync/configSchema.json";
+        "$schema" = "./configSchema.json";
         positionX = "right";
         positionY = "top";
         layer = "overlay";
