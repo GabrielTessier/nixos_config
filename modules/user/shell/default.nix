@@ -35,6 +35,8 @@ in {
           ff = "fastfetch";
 
           glog = "git log --all --oneline --decorate --graph";
+
+          editor = config.userSettings.spawnEditor;
         };
 
       history.size = 10000;
@@ -46,9 +48,9 @@ in {
         theme = "agnoster"; # blinks is also really nice
       };
 
-      #loginExtra = ''
-    	#  [ "$(tty)" = "/dev/tty1" ] && exec Hyprland
-      #'';
+      loginExtra = lib.mkIf (config.userSettings.hyprland.enable) ''
+    	  [ "$(tty)" = "/dev/tty1" ] && exec Hyprland
+      '';
     };
   };
 }
