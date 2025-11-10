@@ -45,6 +45,7 @@
 
       # wm
       hyprland.enable = true;
+      wlogout.enable = true;
       waybar.enable = true;
 
       # style
