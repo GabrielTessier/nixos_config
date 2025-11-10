@@ -3,6 +3,9 @@
 {
   config = {
     userSettings = {
+      name = "Toto";
+      email = "";
+
       # setup
       shell = {
         enable = true;

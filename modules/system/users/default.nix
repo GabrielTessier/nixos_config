@@ -26,8 +26,6 @@
         };
       }) config.systemSettings.users);
 
-    #services.getty.autologinUser = "gabriel";
-
     home-manager.users = builtins.listToAttrs
       (map (user: {
         name = user;

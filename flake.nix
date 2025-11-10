@@ -15,6 +15,8 @@
     grub2-themes = {
       url = "github:vinceliuice/grub2-themes";
     };
+
+    import-tree.url = "github:vic/import-tree";
   };
   
   outputs = inputs@{ self, ... }:
@@ -33,7 +35,7 @@
             modules = [
               { config.networking.hostName = host; }
               (./hosts + "/${host}")
-              ./modules/system
+              (inputs.import-tree ./modules/system)
               
               inputs.nixos-facter-modules.nixosModules.facter
               { config.facter.reportPath = ./facter.json; }

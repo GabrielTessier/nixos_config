@@ -3,6 +3,9 @@
 {
   config = {
     userSettings = {
+      name = "Gabriel TESSIER";
+      email = "gabriel.tessier45@gmail.com";
+
       # setup
       shell = {
         enable = true;

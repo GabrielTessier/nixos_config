@@ -1,4 +1,4 @@
-{ config, lib, pkgs, hostname, ...}:
+{ inputs, config, lib, pkgs, hostname, ...}:
 {
   imports = [
     ./configuration.nix
@@ -11,7 +11,7 @@
       value = ({
         imports = [
           (./users + "/${user}.nix")
-          ../../modules/user
+          (inputs.import-tree ../../modules/user)
         ];
       });
     }) config.systemSettings.users);
