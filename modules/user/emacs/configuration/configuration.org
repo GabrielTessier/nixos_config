@@ -1,0 +1,1193 @@
+#+title: Emacs Configuration
+#+options: toc:nil num:nil
+
+From : [[https://github.com/hrs/dotfiles/blob/ec9ce64438a3c2d4c3a86b5c288e7f4b17a2cb83/emacs/.config/emacs/configuration.org][github:hrs/dotfiles/emacs/.config/emacs/configuration.org]]
+
+* Configure =use-package=
+
+I use =use-package= to install and configure my packages. My =init.el= includes the initial setup for =package.el= and ensures that =use-package= is installed, since I wanna do that right away.
+
+This makes sure that =use-package= will install the package if it's not already available. It also means that I should be able to open Emacs for the first time on a fresh Debian box and have my whole environment automatically installed. I'm not /totally/ sure about that, but we're gettin' close.
+
+#+begin_src emacs-lisp
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
+#+end_src
+
+Defer loading packages unless explicitly demanded.
+
+#+begin_src emacs-lisp
+  (setq use-package-always-defer t)
+#+end_src
+
+Always compile packages, and use the newest version available.
+
+#+begin_src emacs-lisp
+  (use-package auto-compile
+    :demand t
+    :config (auto-compile-on-load-mode))
+
+  (setq load-prefer-newer t)
+#+end_src
+
+Disable deprecation warnings about =cl=. The =cl= library has been deprecated, but lots of packages still use it. I can't control that, but I can disable the warnings.
+
+#+begin_src emacs-lisp
+  (setq byte-compile-warnings '(cl-functions))
+#+end_src
+
+Don't pop up a buffer to warn me about deprecations and other minor issues.
+
+#+begin_src emacs-lisp
+  (setq warning-minimum-level :emergency)
+#+end_src
+
+* Use =sensible-defaults.el=
+
+Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for some basic settings.
+
+#+begin_src emacs-lisp
+  (use-package sensible-defaults
+    :vc (:url "https://github.com/hrs/sensible-defaults.el.git"
+              :rev :newest)
+    :demand t
+
+    :config
+    (sensible-defaults/use-all-settings)
+    (sensible-defaults/use-all-keybindings)
+    (sensible-defaults/backup-to-temp-directory))
+#+end_src
+
+* Utility functions
+
+Define a big ol' bunch of handy utility functions.
+
+#+begin_src emacs-lisp
+  (defun +visit-last-migration ()
+    "Open the most recent Rails migration."
+    (interactive)
+    (let ((migrations
+           (directory-files
+            (expand-file-name "db/migrate" (project-root (project-current))) t)))
+      (find-file (car (last migrations)))))
+
+  (defun +image-path-p (path)
+    "Return true if the path corresponds to an image file."
+    (member (downcase (or (file-name-extension path) ""))
+            '("bmp" "gif" "jpeg" "jpg" "png" "tiff")))
+
+  (defun +quit-window-and-kill ()
+    "Quit the current window and kill the buffer. Handy for pop-ups."
+    (interactive)
+    (quit-window t))
+
+  (defun +maphash (f hash)
+    "Call function `f' on each (key, value) pair in `hash', returning the results in a list."
+    (let ((acc '()))
+      (maphash (lambda (k v) (setq acc (cons (funcall f k v) acc)))
+               hash)
+      acc))
+#+end_src
+
+* UI preferences
+
+** Don't resize the frame
+
+By default, Emacs attempts to resize each frame to maintain a certain number of characters in each line, so this width varies depending on the font used. This operation is a bit expensive, and since I use =hyprland=, a tiling window manager, it's also completely unnecessary, since the frame will be resized differently regardless. Just skip the whole thing instead.
+
+#+begin_src emacs-lisp
+  (setq frame-inhibit-implied-resize t)
+#+end_src
+
+** Tweak window chrome
+
+I don't usually use the menu or scroll bar, and they take up useful space.
+
+#+begin_src emacs-lisp
+  (tool-bar-mode 0)
+  (scroll-bar-mode -1)
+#+end_src
+
+There's a tiny scroll bar that appears in the minibuffer window. This disables that:
+
+#+begin_src emacs-lisp
+  (set-window-scroll-bars (minibuffer-window) nil nil)
+#+end_src
+
+** Disable the visible bell
+
+#+begin_src emacs-lisp
+  (setq visible-bell nil)
+#+end_src
+
+** Enable smooth scrolling
+
+This is especially nice when I've got a document with embedded images or rendered equations. Or on the rare occasions I use a mouse.
+
+In certain read-only modes I like to bind =J= and =K= to scrolling. That's nice for reading mail or RSS items. This provides a =+bind-scroll-keys= function I can use to enable that for a given key map.
+
+#+begin_src emacs-lisp
+  (pixel-scroll-precision-mode 1)
+
+  (defvar +scroll-delta 180)
+
+  (defun +scroll-up-some ()
+    (interactive)
+    (pixel-scroll-precision-scroll-up +scroll-delta))
+
+  (defun +scroll-down-some ()
+    (interactive)
+    (pixel-scroll-precision-scroll-down +scroll-delta))
+#+end_src
+
+** Configure a pretty modeline
+
+#+begin_src emacs-lisp
+  (use-package moody
+    :demand t
+
+    :custom
+    (x-underline-at-descent-line t)
+
+    :config
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode)
+    (moody-replace-eldoc-minibuffer-message-function))
+#+end_src
+
+*** Show time in the modeline iff the frame is fullscreen
+
+I have a clock in my window manager's bar, but if my Emacs frame is fullscreen I can't see that. This shows it in the modeline instead.
+
+It hides the average load and mail status, since I generally don't need those.
+
+#+begin_src emacs-lisp
+  (setq display-time-format "[%-I:%M %p on %A, %b %-d]"
+        display-time-default-load-average nil
+        display-time-mail-file 0)
+
+  (defun +show-time-for-fullscreen (frame)
+    "Show the time in the modeline when the FRAME becomes full screen and there's only one window."
+    (let ((fullscreen (frame-parameter frame 'fullscreen)))
+      (if (and (memq fullscreen '(fullscreen fullboth))
+               (= 1 (count-windows)))
+          (display-time-mode 1)
+        (display-time-mode -1))))
+
+  (add-hook 'window-size-change-functions #'+show-time-for-fullscreen)
+#+end_src
+
+** Load up a theme
+
+This sets up the current theme.
+
+#+begin_src emacs-lisp
+  (setq custom-theme-directory
+               (concat user-emacs-directory "themes"))
+
+  (load-theme 'witchhazel t)
+
+  (use-package catppuccin-theme
+    :demand t
+    :custom
+    (catppuccin-flavor 'macchiato)
+
+    :config
+    (catppuccin-reload))
+#+end_src
+
+** Use =minions= to hide all minor modes
+
+I never want to see a minor mode, and manually adding =:diminish= to every use-package declaration is a hassle. This uses =minions= to hide all the minor modes in the modeline. Nice!
+
+#+begin_src emacs-lisp
+  (use-package minions
+    :demand t
+
+    :custom
+    (minions-mode-line-delimiters (cons "" ""))
+
+    :config
+    (defun +set-minions-mode-line-lighter ()
+      (setq minions-mode-line-lighter
+            (if (display-graphic-p) "⚙" "#")))
+
+    (add-hook 'server-after-make-frame-hook #'+set-minions-mode-line-lighter)
+
+    (minions-mode 1))
+#+end_src
+
+** Scroll conservatively
+
+When point goes outside the window, Emacs usually recenters the buffer point. I'm not crazy about that. This changes scrolling behavior to only scroll as far as point goes.
+
+#+begin_src emacs-lisp
+  (setq scroll-conservatively 100)
+#+end_src
+
+** Set font and configure font resizing
+
+#+begin_src emacs-lisp
+  (defvar +font-size-fixed 140)
+  (defvar +font-size-variable 130)
+
+  (set-face-attribute 'default nil
+                      :family "JetBrains Mono"
+                      :height +font-size-fixed)
+
+  (set-face-attribute 'fixed-pitch nil
+                      :family "JetBrains Mono"
+                      :height +font-size-fixed)
+
+  (set-face-attribute 'variable-pitch nil
+                      :family "Minion Pro"
+                      :height +font-size-variable)
+
+  (use-package default-text-scale
+    :bind
+    (("C-)" . default-text-scale-reset)
+     ("C-=" . default-text-scale-increase)
+     ("C--" . default-text-scale-decrease)))
+#+end_src
+
+** Highlight the current line
+
+=global-hl-line-mode= softly highlights the background color of the line containing point. It makes it a bit easier to find point, and it's useful when pairing or presenting code.
+
+#+begin_src emacs-lisp
+  (global-hl-line-mode)
+#+end_src
+
+** Highlight uncommitted changes
+
+Use the =diff-hl= package to highlight changed-and-uncommitted lines when programming.
+
+#+begin_src emacs-lisp
+  (use-package diff-hl
+    :config
+    :hook ((text-mode prog-mode vc-dir-mode) . turn-on-diff-hl-mode))
+#+end_src
+
+* Project management
+
+** =comint=
+
+Treat =comint= sessions more like a shell.
+
+#+begin_src emacs-lisp
+  (use-package comint-mode
+    :ensure nil
+    :bind (("C-l" . comint-clear-buffer)
+           ("C-d" . +kill-current-buffer)))
+#+end_src
+
+** =completion-at-point=
+
+Use =corfu= for a pop-up completions menu.
+
+#+begin_src emacs-lisp
+  (use-package corfu
+    :bind
+    (:map corfu-map
+          ("TAB" . corfu-next)
+          ([tab] . corfu-next)
+          ("S-TAB" . corfu-previous)
+          ([backtab] . corfu-previous))
+
+    :custom
+    (tab-always-indent 'complete)
+    (corfu-auto t)
+    (corfu-cycle t)
+    (corfu-preselect 'prompt)
+
+    :init
+    (global-corfu-mode))
+#+end_src
+
+** =ediff=
+
+When using =ediff= to compare file, show files side by side and don't split the control panel into a separate frame.
+
+#+begin_src emacs-lisp
+  (use-package ediff
+    :ensure nil
+
+    :config
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+    (setq ediff-split-window-function 'split-window-horizontally))
+#+end_src
+
+** =magit=
+
+- I bring up the status menu with =C-x g=.
+- The default behavior of =magit= is to ask before pushing. I haven't had any problems with accidentally pushing, so I'd rather not confirm that every time.
+- Per [[http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html][tpope's suggestions]], highlight commit text in the summary line that goes beyond 50 characters.
+- I'd like to start in the insert state when writing a commit message.
+- Always take up the whole frame. I'm often on a laptop, where this is especially convenient, but generally I want additional git-related space more than I want more windows.
+
+#+begin_src emacs-lisp
+  (use-package magit
+    :ensure-system-package (git git-absorb)
+    :bind ("C-x g" . magit-status)
+
+    :config
+    (use-package magit-section)
+    (use-package with-editor)
+
+    (require 'git-rebase)
+
+    (defun +get-author-parse-line (key value domain)
+      (let* ((values (mapcar #'s-trim (s-split ";" value)))
+             (name (car values))
+             (email (or (cadr values) key)))
+        (format "%s <%s@%s>" name email domain)))
+
+    (defun +git-authors ()
+      (let* ((config (yaml-parse-string (f-read-text "~/.git-authors")))
+             (domain (gethash 'domain (gethash 'email config)))
+             (authors '()))
+        (+maphash (lambda (k v) (+git-author-parse-line k v domain))
+                  (gethash 'authors config))))
+
+    (defun +insert-git-coauthor ()
+      "Prompt for co-author and insert a co-authored-by block."
+      (interactive)
+      (insert (format "Co-authored-by: %s\n"
+                      (completing-read "Co-authored by:" (+git-authors)))))
+
+    (defun +changed-files-on-branch (&optional directory)
+      "Return a list of files that have changed on this branch (relative to main) relative to DIRECTORY."
+      (let ((default-directory (or directory (project-root (project-current)))))
+        (seq-remove #'string-empty-p
+                    (split-string (shell-command-to-string "git diff --name-only main")
+                                  "\n"))))
+
+    (transient-replace-suffix 'magit-commit 'magit-commit-autofixup
+      '("x" "Absorb changes" magit-commit-absorb))
+
+    (setq git-commit-summary-max-length 50
+          magit-bury-buffer-function 'magit-restore-window-configuration
+          magit-display-buffer-function 'magit-display-buffer-fullframe-status-topleft-v1
+          magit-push-always-verify nil))
+#+end_src
+
+I'm also partial to =git-timemachine=, which lets you quickly page through the history of a file.
+
+#+begin_src emacs-lisp
+  (use-package git-timemachine)
+#+end_src
+
+** =project.el=
+
+- Bind searching within the project to =C-c v=.
+- Treat a directory containing =.dir-locals.el= as a project root (useful for projects not under version control).
+- When I switch projects, just open a =dired= buffer at the project root rather than asking whether I want to open a file, search, etc.
+
+#+begin_src emacs-lisp
+  (use-package project
+    :bind (("C-c v" . deadgrep)
+           ("C-x p p" . +project-switch-project))
+
+    :custom
+    (project-vc-extra-root-markers '(".dir-locals.el"))
+
+    :config
+    (defun +project-switch-project (dir)
+      (interactive (list (project-prompt-project-dir)))
+      (dired dir)))
+#+end_src
+
+* Programming environments
+
+I like shallow indentation, but tabs are displayed as 8 characters by default. This reduces that.
+
+#+begin_src emacs-lisp
+  (setq-default tab-width 2)
+#+end_src
+
+Treating terms in CamelCase symbols as separate words makes editing a little easier for me, so I like to use =subword-mode= everywhere.
+
+#+begin_src emacs-lisp
+  (use-package subword
+    :config (global-subword-mode 1))
+#+end_src
+
+Compilation output goes to the =*compilation*= buffer. I rarely have that window selected, so the compilation output disappears past the bottom of the window. This automatically scrolls the compilation window so I can always see the output.
+
+#+begin_src emacs-lisp
+  (setq compilation-scroll-output t)
+#+end_src
+
+** =eglot=
+
+I'm using the built-in =eglot= to manage my LSP servers.
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure t
+    :hook (((c-mode) . eglot-ensure))
+    :config
+    (defun +eglot-format-buffer-on-save ()
+      (add-hook 'before-save-hook #'eglot-format-buffer -10 t)))
+#+end_src
+
+** =direnv=
+
+#+begin_src emacs-lisp
+  (use-package direnv
+    :custom
+    (direnv-always-show-summary nil)
+
+    :config
+    (direnv-mode))
+#+end_src
+
+** Toggle code folding
+
+I don't use =TAB= to indent when I'm in =normal-mode=, so instead I use it to toggle hiding blocks of code.
+
+Similarly, I bind =BACKTAB= to toggle hiding /all/ the top-level code blocks. This parallels the use of those keys in Org.
+
+#+begin_src emacs-lisp
+  (use-package hs-minor-mode
+    :ensure nil
+    :hook prog-mode
+    :bind (("C-<tab>" . hs-toggle-hiding)
+           ("C-<iso-lefttab>" . +toggle-all-folds))
+
+    :init
+    (defvar-local +maybe-hidden-blocks nil)
+    (add-hook 'hs-hide-hook (lambda () (setq-local +maybe-hidden-blocks t)))
+
+    (defun +toggle-all-folds ()
+      "If any block are hidden, show them all. Otherwise, hide all top-level blocks."
+      (interactive)
+      (if +maybe-hidden-blocks
+          (progn
+            (setq-local +maybe-hidden-blocks nil)
+            (hs-show-all))
+        (hs-hide-all))))
+#+end_src
+
+** =cron=
+
+Add syntax highlighting to =cron= files.
+
+#+begin_src emacs-lisp
+  (use-package crontab-mode)
+#+end_src
+
+** CSS & Sass
+
+Indent by 2 spaces.
+
+#+begin_src emacs-lisp
+  (use-package css-mode
+    :config
+    (setq css-indent-offset 2))
+#+end_src
+
+Don't compile the current SCSS file every time I save.
+
+#+begin_src emacs-lisp
+  (use-package scss-mode
+    :config
+    (setq scss-compile-at-save nil))
+#+end_src
+
+** Gleam
+
+#+begin_src emacs-lisp
+  (use-package gleam-ts-mode
+    :mode (rx ".gleam" eos)
+
+    :config
+    (add-hook 'gleam-ts-mode-hook
+              (lambda () (add-hook 'before-save-hook 'gleam-ts-format nil t))))
+#+end_src
+
+** Haskell
+
+Enable =haskell-doc-mode=, which displays the type signature of a function, and use smart indentation.
+
+#+begin_src emacs-lisp
+  (use-package haskell-mode
+    :hook (haskell-mode . (lambda ()
+                            (haskell-doc-mode)
+                            (turn-on-haskell-indent))))
+#+end_src
+
+** JavaScript & TypeScript
+
+Use LSP with JS.
+
+#+begin_src emacs-lisp
+  (use-package js-mode
+    :ensure nil
+    :hook (js-mode . eglot-ensure))
+#+end_src
+
+Browse JSON documents hierarchically with =json-navigator-navigate-after-point=.
+
+#+begin_src emacs-lisp
+  (use-package json-navigator
+    :commands (json-navigator-navigate-after-point))
+#+end_src
+
+** Lisps
+
+=rainbow-delimiters= is convenient for coloring matching parentheses.
+
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook ((emacs-lisp-mode lisp-mode racket-mode) . rainbow-delimiters-mode))
+#+end_src
+
+*** Common Lisp
+
+Set up [[https://slime.common-lisp.dev/][SLIME]] to interactively hack on Common Lisp.
+
+#+begin_src emacs-lisp
+  (use-package slime
+    :ensure-system-package sbcl
+    :commands (slime)
+
+    :config
+    (setq inferior-lisp-program "sbcl")
+    (load (expand-file-name "~/.quicklisp/slime-helper.el"))
+    (add-to-list 'slime-contribs 'slime-autodoc))
+#+end_src
+
+*** Emacs Lisp
+
+If I'm writing in Emacs Lisp I'd like to use =eldoc-mode= to display documentation.
+
+#+begin_src emacs-lisp
+  (use-package eldoc
+    :hook (emacs-lisp-mode . eldoc-mode))
+#+end_src
+
+Bind running tests to =C-c , v=, like in =rspec-mode=.
+
+#+begin_src emacs-lisp
+  (use-package ert
+    :ensure nil
+    :bind (:map emacs-lisp-mode-map ("C-c , v" . +ert-verify))
+
+    :config
+    ;(evil-define-key '(motion normal) ert-results-mode-map (kbd "C-p") 'project-find-file)
+
+    (defun +ert-verify ()
+      "Delete all loaded tests from the runtime, evaluate the
+   current buffer and run all loaded tests with ert."
+      (interactive)
+      (ert-delete-all-tests)
+      (eval-buffer)
+      (ert 't)))
+#+end_src
+
+Buttercup offers BDD-style testing. I've been using that instead of ERT for my packages' tests, and I find myself preferring it (especially for features like ~spy-on~).
+
+#+begin_src emacs-lisp
+  (use-package buttercup)
+#+end_src
+
+I use =package-lint= to verify that my packages are, y'know, linted.
+
+#+begin_src emacs-lisp
+  (use-package package-lint)
+#+end_src
+
+** OCaml
+
+Use =tuareg-mode= for editing OCaml.
+
+#+begin_src emacs-lisp
+  (use-package tuareg
+    :ensure-system-package opam
+
+    :config
+    (electric-indent-mode 0))
+#+end_src
+
+Configure Merlin. This also requires installing the Merlin package through OPAM with =opam install merlin=.
+
+#+begin_src emacs-lisp
+  (use-package merlin
+    :after tuareg-mode
+    :hook (tuareg-mode . merlin-mode))
+#+end_src
+
+** Python
+
+#+begin_src emacs-lisp
+  (use-package python-mode
+    :hook (python-mode . eglot-ensure))
+#+end_src
+
+Enable =elpy=. This provides automatic indentation, auto-completion, syntax checking, etc. Use the =python3= interpreter for eldoc.
+
+#+begin_src emacs-lisp
+  (use-package elpy
+    :after python-mode
+
+    :custom
+    (elpy-rpc-python-command "python3")
+
+    :config
+    (elpy-enable))
+#+end_src
+
+Format code according to PEP8 on save:
+
+#+begin_src emacs-lisp
+  (use-package py-autopep8
+    :after python-mode
+    :hook (elpy-mode-hook . py-autopep8-enable-on-save))
+#+end_src
+
+** Rust
+
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :hook (rust-mode . eglot-ensure))
+
+  (add-hook 'rust-mode-hook #'+eglot-format-buffer-on-save)
+#+end_src
+
+** Shell
+
+Indent with 2 spaces.
+
+#+begin_src emacs-lisp
+  (add-hook 'sh-mode-hook
+            (lambda ()
+              (setq sh-basic-offset 2
+                    sh-indentation 2)))
+#+end_src
+
+** SQL
+
+Support syntax-based indentation when editing SQL files.
+
+#+begin_src emacs-lisp
+  (use-package sql-indent
+    :hook (sql-mode . sqlind-minor-mode))
+#+end_src
+
+** Terraform
+
+Install =terraform-mode=.
+
+#+begin_src emacs-lisp
+  (use-package terraform-mode
+    :ensure-system-package terraform
+    :custom
+    (terraform-format-on-save t))
+#+end_src
+
+** =web-mode=
+
+Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
+
+#+begin_src emacs-lisp
+  (use-package web-mode
+    :mode ("\\.erb$"
+           "\\.html$"
+           "\\.php$"
+           "\\.rhtml$")
+
+    :config
+    (setq web-mode-markup-indent-offset 2
+          web-mode-css-indent-offset 2
+          web-mode-code-indent-offset 2
+          web-mode-indent-style 2))
+#+end_src
+
+I'd like to see colors with =rainbow-mode=, so we'll need to install that, too:
+
+#+begin_src emacs-lisp
+  (use-package rainbow-mode
+    :hook web-mode)
+#+end_src
+
+** YAML
+
+This is not a place of honor.
+
+#+begin_src emacs-lisp
+  (use-package yaml-mode)
+#+end_src
+
+** Nix
+
+#+begin_src emacs-lisp
+  (use-package nix-mode)
+#+end_src
+
+* Terminal
+
+I'm trying =vterm=. This disables =global-hl-line-mode= locally and lets me open up a new terminal instance with =C-c t=.
+
+#+begin_src emacs-lisp
+  (use-package multi-vterm
+    :ensure-system-package (cmake
+                            ("/usr/share/doc/libvterm-dev" . libvterm-dev))
+    :commands (multi-vterm)
+    :hook (vterm-mode-hook . (lambda () (setq-local global-hl-line-mode nil)))
+
+    :config
+    (setq vterm-shell "/usr/bin/zsh"))
+
+  (global-set-key (kbd "C-c t") 'multi-vterm)
+#+end_src
+
+* Password management
+
+I manage my passwords with [[https://www.passwordstore.org/][=pass=]], a nifty command-line utility that's accessible through Emacs.
+
+I'll also occasionally use =pwgen= to generate and insert a secure password.
+
+#+begin_src emacs-lisp
+  (use-package password-store-menu
+    :demand t
+    :ensure-system-package pass
+
+    :custom
+    (password-store-menu-key "C-c p")
+
+    :config
+    (password-store-menu-enable))
+
+  (use-package password-store-otp)
+
+  (defun +insert-password ()
+    (interactive)
+    (shell-command "pwgen 30 --num-passwords=1 --secure | tr --delete '\n'" t))
+#+end_src
+
+* Publishing and task management with Org-mode
+
+- Put tags directly after the associated header rather than trying to align them.
+- When hitting =C-<return>= to create a new heading, don't insert the heading between the current heading and its content, but instead append it /after/ the content.
+
+#+begin_src emacs-lisp
+  (use-package org
+    :custom
+    (org-auto-align-tags nil)
+    (org-footnote-auto-label nil)
+    (org-footnote-section nil)
+    (org-insert-heading-respect-content t)
+    (org-tags-column 0))
+#+end_src
+
+Including =org-tempo= restores the =<s=-style easy templates that were deprecated in Org 9.2. This also adds a =<el= template to quickly insert a block of Emacs lisp.
+
+#+begin_src emacs-lisp
+  (use-package org-tempo
+    :demand t
+    :ensure nil
+
+    :config
+    (add-to-list 'org-structure-template-alist
+                 '("el" . "src emacs-lisp")))
+#+end_src
+
+** =TeX= configuration
+
+I rarely write =LaTeX= directly any more, but I often export through it with =Org=, so I'm keeping them together.
+
+- Automatically parse the file after loading it.
+- Enable a minor mode for dealing with math (it adds a few useful keybindings), and always treat the current file as the "main" file. That's intentional, since I'm usually actually in an org document.
+
+#+begin_src emacs-lisp
+  (use-package auctex
+    :custom
+    (TeX-parse-self t)
+
+    :config
+    (TeX-global-PDF-mode 1)
+
+    (add-hook 'LaTeX-mode-hook
+              (lambda ()
+                (LaTeX-math-mode)
+                (setq TeX-master t))))
+#+end_src
+
+* Writing prose
+
+I write prose in several modes: I might be editing an Org document, or a commit message, or an email. These are the main ones, with sub-items being /derived/ from their parents:
+
+- =git-commit-mode=
+- =text-mode=
+  - =markdown-mode=
+    - =gfm-mode=
+  - =message-mode=
+    - =mu4e-compose-mode=
+  - =org-mode=
+
+Recall that derived modes "inherit" their parent's hooks, so a hook added onto e.g. =text-mode= will also be executed by =mu4e-compose-mode=.
+
+There are some exceptions, but I can usually associate a hook with every prose-related mode, so I store those in a list:
+
+#+begin_src emacs-lisp
+  (defvar prose-modes
+    '(gfm-mode
+      git-commit-mode
+      markdown-mode
+      message-mode
+      mu4e-compose-mode
+      org-mode
+      text-mode))
+
+  (defvar prose-mode-hooks
+    (mapcar (lambda (mode) (intern (format "%s-hook" mode)))
+            prose-modes))
+#+end_src
+
+** Activate =writing-mode=
+
+This minor mode enables a distraction-free writing environment. It enables a whole bunch of pretty modes, switches fonts, enables inline images, and even displays the word count in the mode-line. Toggle it with =<f9>=.
+
+#+begin_src emacs-lisp
+  (use-package mixed-pitch)
+(use-package olivetti)
+(use-package org-appear :after org)
+(use-package org-modern :after org)
+(use-package org-superstar :after org)
+
+(use-package wc-mode
+  :custom
+  (wc-modeline-format "[%tw words]")
+
+  :config
+  (unbind-key "C-c C-w" wc-mode-map)
+  (add-to-list 'minions-prominent-modes 'wc-mode))
+
+(use-package writing-mode
+  :load-path "resources"
+  :defer 1
+  :hook (org-mode . writing-mode-repo)
+  :bind (([f9] . writing-mode)
+         ("<XF86Messenger>" . writing-mode)
+         ("<XF86Tools>" . writing-mode))
+
+  :config
+  (require 'mixed-pitch)
+  (require 'olivetti)
+  (require 'org-appear)
+  (require 'org-indent)
+  (require 'org-modern)
+  (require 'org-superstar)
+  (require 'wc-mode)
+
+  (defun writing-mode-repo () (writing-mode 1))
+
+  (setq writing-enabled-modes
+        '((org-mode . (org-appear-mode
+                       org-indent-mode
+                       org-modern-mode
+                       org-superstar-mode))
+          (elfeed-show-mode . (mixed-pitch-mode
+                               olivetti-mode))
+          (special-mode . (mixed-pitch-mode
+                           olivetti-mode))
+          (text-mode . (mixed-pitch-mode
+                        olivetti-mode
+                        prettify-symbols-mode
+                        visual-line-mode
+                        wc-mode)))))
+
+  (use-package publish-mode
+    :load-path "resources"
+    :bind ([f8] . publish-build-and-view-pdf)
+    :config
+    (setq publish-viewer-pdf "evince"))
+#+end_src
+
+
+** Editing with Markdown
+
+Because I can't always use =org=.
+
+- Associate =.md= files with GitHub-flavored Markdown.
+- Use =pandoc= to render the results.
+- Apply syntax highlighting in code blocks.
+- Define a function to convert Markdown blocks to Org.
+
+#+begin_src emacs-lisp
+  (use-package markdown-mode
+    :ensure-system-package pandoc
+    :commands gfm-mode
+    :mode (("\\.md$" . gfm-mode))
+    :config
+    (custom-set-faces
+     '(markdown-pre-face ((t nil))))
+
+    (setq markdown-command "pandoc --standalone --mathjax --from=gfm"
+          markdown-disable-tooltip-prompt t
+          markdown-fontify-code-blocks-natively t)
+
+    (defun +markdown-to-org-region (start end)
+      "Convert Markdown formatted text in region (START, END) to Org by
+  shelling out to `pandoc'."
+      (interactive "r")
+      (shell-command-on-region start end
+                               "pandoc -f markdown -t org --wrap=preserve" t t)))
+#+end_src
+
+** Cycle between spacing alternatives
+
+Successive calls to =cycle-spacing= rotate between changing the whitespace around point to:
+
+- A single space,
+- No spaces, or
+- The original spacing.
+
+Binding this to =M-SPC= is strictly better than the original binding of =just-one-space=.
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "M-SPC") 'cycle-spacing)
+#+end_src
+
+** Enable region case modification
+
+#+begin_src emacs-lisp
+  (put 'downcase-region 'disabled nil)
+  (put 'upcase-region 'disabled nil)
+#+end_src
+
+* Editing settings
+
+** Quickly visit Emacs configuration
+
+I futz around with my dotfiles a lot. This binds =C-c e= to quickly open my Emacs configuration file.
+
+#+begin_src emacs-lisp
+  (defun +visit-emacs-config ()
+    (interactive)
+    (find-file (concat user-emacs-directory "configuration.org")))
+
+  (global-set-key (kbd "C-c e") '+visit-emacs-config)
+#+end_src
+
+** Always kill current buffer
+
+Assume that I always want to kill the current buffer when hitting =C-x k=.
+
+#+begin_src emacs-lisp
+  (defun +kill-current-buffer ()
+    "Kill the current buffer without prompting."
+    (interactive)
+    (kill-buffer (current-buffer)))
+
+  (global-set-key (kbd "C-x k") '+kill-current-buffer)
+#+end_src
+
+** Set up =helpful=
+
+The =helpful= package provides, among other things, more context in Help buffers.
+
+#+begin_src emacs-lisp
+  (use-package helpful
+    :commands (helpful-callable helpful-variable helpful-key)
+    :bind
+    ("C-h f" . helpful-callable)
+    ("C-h v" . helpful-variable)
+    ("C-h k" . helpful-key)
+
+    :config
+    (setq help-window-select t))
+#+end_src
+
+** Save my location within a file
+
+Using =save-place-mode= saves the location of point for every file I visit. If I close the file or close the editor, then later re-open it, point will be at the last place I visited.
+
+#+begin_src emacs-lisp
+  (setq save-place-forget-unreadable-files nil)
+  (save-place-mode 1)
+#+end_src
+
+** Always indent with spaces
+
+Never use tabs. Tabs are the devil's whitespace.
+
+#+begin_src emacs-lisp
+  (setq-default indent-tabs-mode nil)
+#+end_src
+
+** Install and configure =which-key=
+
+=which-key= displays the possible completions for a long keybinding. That's really helpful for some modes (like =project.el=, for example).
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :demand t
+    :config (which-key-mode))
+#+end_src
+
+** Configure =yasnippet=
+
+I always want =yasnippet= enabled.
+
+I /don’t/ want =yas= to always indent the snippets it inserts. Sometimes this looks pretty bad (when indenting =org-mode=, for example, or trying to guess at the correct indentation for Python).
+
+#+begin_src emacs-lisp
+  (use-package yasnippet
+    :demand t
+    :config
+    (setq yas-indent-line 'auto)
+    (yas-global-mode 1))
+#+end_src
+
+** Configure minibuffer completion
+
+I'm trying =vertico=, =orderless=, =consult=, and =marginalia= as my completion framework.
+
+#+begin_src emacs-lisp
+  (use-package vertico
+    :bind (:map vertico-map
+                ("RET" . vertico-directory-enter)
+                ("DEL" . vertico-directory-delete-char)
+                ("M-DEL" . vertico-directory-delete-word))
+
+    :init
+    (vertico-mode))
+
+  (use-package savehist
+    :demand t
+    :init
+    (savehist-mode))
+
+  (use-package orderless
+    :demand t
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-defaults nil)
+    (completion-category-overrides '((file (styles basic partial-completion)))))
+
+  (use-package consult
+    :bind
+    (("M-i" . consult-imenu)
+     ("C-x b" . consult-buffer)
+     ("C-x r b" . consult-bookmark)
+     ("C-s" . consult-line))
+
+    :config
+    (setq completion-in-region-function #'consult-completion-in-region))
+
+  (use-package marginalia
+    :bind (:map minibuffer-local-map
+                ("M-A" . marginalia-cycle))
+
+    :init
+    (marginalia-mode))
+#+end_src
+
+** Switch and rebalance windows when splitting
+
+When splitting a window, I invariably want to switch to the new window. This makes that automatic. Similarly, when closing a window I'd like to rebalance the remaining windows.
+
+#+begin_src emacs-lisp
+  (advice-add #'delete-window
+              :after #'(lambda (&rest _)
+                         (balance-windows)))
+
+  (advice-add #'split-window
+              :after #'(lambda (&rest _)
+                         (balance-windows)
+                         (other-window 1)))
+#+end_src
+
+** Mass editing of =grep= results
+
+I like the idea of mass editing =grep= results the same way I can edit filenames in =dired=. These keybindings allow me to use =C-x C-q= to start editing =grep= results and =C-c C-c= to stop, just like in =dired=.
+
+#+begin_src emacs-lisp
+  (use-package wgrep)
+
+  (eval-after-load 'grep
+    '(define-key grep-mode-map
+      (kbd "C-x C-q") 'wgrep-change-to-wgrep-mode))
+
+  (eval-after-load 'wgrep
+    '(define-key grep-mode-map
+      (kbd "C-c C-c") 'wgrep-finish-edit))
+
+  (setq wgrep-auto-save-buffer t)
+#+end_src
+
+** Reformat typographic symbols and HTML entities to plain text
+
+I sometimes need to convert some copied text containing typographic symbols like curly quotes and em-dashes into ASCII text. Similarly, I'll sometimes need to do that with HTML entities, too. This provides functions to do that within a specified region.
+
+#+begin_src emacs-lisp
+  (defvar +typographic-replacements
+    '(("…" . "...")
+      ("‘" . "'")
+      ("’" . "'")
+      ("“" . "\"")
+      ("”" . "\"")
+      ("–" . "--")
+      ("—" . "---")))
+
+  (defvar +html-entity-replacements
+    '(("&amp;" . "&")
+      ("&nbsp;" . " ")
+      ("&lsquo;" . "'")
+      ("&rsquo;" . "'")
+      ("&apos;" . "'")
+      ("&ldquo;" . "\"")
+      ("&rdquo;" . "\"")
+      ("&quot;" . "\"")
+      ("&lt;" . "<")
+      ("&gt;" . ">")))
+
+  (defun +replace-symbols (replacements)
+    (save-restriction
+      (when (region-active-p)
+        (narrow-to-region (region-beginning) (region-end)))
+      (dolist (pair replacements)
+        (goto-char (point-min))
+        (while (search-forward (car pair) nil t)
+          (replace-match (cdr pair))))))
+
+  (defun +replace-typographic-symbols ()
+    "Replace common typographic symbols in the region or buffer with their ASCII equivalents."
+    (interactive)
+    (+replace-symbols +typographic-replacements))
+
+  (defun +replace-html-entities ()
+    "Replace common HTML entities in the region or buffer with their ASCII equivalents."
+    (interactive)
+    (+replace-symbols +html-entity-replacements))
+#+end_src
+
+** Edit files as =sudo=
+
+I always forget the TRAMP syntax, and this provides the easier-to-remember =sudo-edit= function.
+
+#+begin_src emacs-lisp
+  (use-package sudo-edit
+    :commands (sudo-edit))
+#+end_src
+
+* Set custom keybindings
+
+Just a few handy functions.
+
+#+begin_src emacs-lisp
+  ;(global-set-key (kbd "C-w") 'backward-kill-word)
+  (global-set-key (kbd "M-o") 'other-window)
+  (global-set-key (kbd "C-x C-b") 'ibuffer)
+#+end_src
+
+* Extra
+
+Load any extra bits and bobs.
+
+#+begin_src emacs-lisp
+  (when (file-exists-p (concat user-emacs-directory "private.el"))
+    (load-file (concat user-emacs-directory "private.el")))
+#+end_src
