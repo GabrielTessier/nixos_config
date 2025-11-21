@@ -44,7 +44,7 @@ in
         #xdg-desktop-portal-termfilechooser
       ];
     };
-    
+
     #xdg.portal.config.common = {
     #  default = [ "hyprland" ];
     #  "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
@@ -53,9 +53,9 @@ in
     #  default = [ "hyprland" ];
     #  "org.freedesktop.impl.portal.FileChooser" = "termfilechooser";
     #};
-    
+
     #home.sessionVariables.TERMCMD = "kitty --class=filechoose_yazi";
-    
+
     #xdg.configFile."xdg-desktop-portal-termfilechooser/config" =
     #{
     #  force = true;
@@ -81,7 +81,7 @@ in
         "$mainMod" = "SUPER";
 
         monitor = "eDP-1,1920x1200,auto,1";
-        
+
         env = [
           #"AQ_DRM_DEVICES,${config.home.sessionVariables.AQ_DRM_DEVICES}"
           #"AW_NO_MODIFIERS,1"
@@ -242,7 +242,7 @@ in
           ", XF86AudioLowerVolume, exec, pamixer -d 5 "
           ", XF86AudioMute, exec, pamixer -t"
           ", XF86AudioMicMute, exec, pamixer --default-source -m"
-          
+
           # Brightness control
           ", XF86MonBrightnessDown, exec, brightnessctl set 5%- "
           ", XF86MonBrightnessUp, exec, brightnessctl set +5% "
@@ -295,14 +295,14 @@ in
           "$mainMod, mouse:272, movewindow"
           "$mainMod, mouse:273, resizewindow"
         ];
-        
+
         windowrule = [
           "float, title:^(Contrôle du volume)$"
 	        "size 75% 75%, title:^(Contrôle du volume)$"
 
 	        "float, title:^(Périphériques Bluetooth)$"
 	        "size 75% 75%, title:^(Périphériques Bluetooth)$"
-	        
+
 	        "float, title:^(Waypaper)$"
 	        "size 50% 75%, title:^(Waypaper)$"
         ];
@@ -312,7 +312,7 @@ in
 	        "pin, title:^(Picture-in-Picture)$"
 	        "move 69.5% 4%, title:^(Picture-in-Picture)$"
         ];
-        
+
         xwayland = {
           force_zero_scaling = true;
         };
@@ -345,7 +345,7 @@ in
       grim
       slurp
       swappy
-      
+
       bibata-cursors
       brightnessctl
     ]);
@@ -361,5 +361,6 @@ in
         wallpaper = [ ",~/wallpaper/wallpaper.png" ];
       };
     };
+    userSettings.wofi.enable = true;
   };
 }
