@@ -1,5 +1,4 @@
-{ config, lib, pkgs, ... }:
-
+{ config, lib, pkgs, inputs, ... }:
 {
   config = {
     # Packages
@@ -55,7 +54,7 @@
         footer = true;
       };
     };
-    
+
     # Networking
     networking.networkmanager.enable = true; # Use networkmanager
 

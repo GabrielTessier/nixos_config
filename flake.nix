@@ -1,24 +1,24 @@
 {
   description = "My system configuration";
-  
+
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
-    
+
     nixos-facter-modules.url = "github:numtide/nixos-facter-modules";
-    
+
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    
+
     grub2-themes = {
       url = "github:vinceliuice/grub2-themes";
     };
 
     import-tree.url = "github:vic/import-tree";
   };
-  
+
   outputs = inputs@{ self, ... }:
     let
       nix-folder = "/etc/nixos/new_nix";
@@ -36,10 +36,10 @@
               { config.networking.hostName = host; }
               (./hosts + "/${host}")
               (inputs.import-tree ./modules/system)
-              
+
               inputs.nixos-facter-modules.nixosModules.facter
               { config.facter.reportPath = ./facter.json; }
-              
+
               inputs.home-manager.nixosModules.home-manager {
                 home-manager.extraSpecialArgs = {
                   inherit inputs;
@@ -47,7 +47,7 @@
                   hostname = host;
                 };
               }
-              
+
               inputs.grub2-themes.nixosModules.default
             ];
             specialArgs = {
@@ -58,4 +58,3 @@
         }) hosts);
     };
 }
-  

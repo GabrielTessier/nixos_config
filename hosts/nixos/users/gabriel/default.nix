@@ -34,7 +34,8 @@
       #  virtualMachines.enable = false;
       #};
       #ai.enable = false;
-      
+      discord.enable = true;
+
       gpg = {
         enable = true;
         signGit = {
