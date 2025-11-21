@@ -66,13 +66,6 @@ in
     #  '';
     #};
 
-    gtk.cursorTheme = {
-      package = pkgs.bibata-cursors;
-      #name = if (config.stylix.polarity == "light") then "Quintom_Ink" else "Quintom_Snow";
-      name = "Bibata-Modern-Ice";
-      size = 24;
-    };
-
     wayland.windowManager.hyprland = {
       enable = true;
       #package = inputs.hyprland.packages.${pkgs.system}.hyprland;
@@ -362,5 +355,6 @@ in
       };
     };
     userSettings.wofi.enable = true;
+    userSettings.gtk.enable = true;
   };
 }
