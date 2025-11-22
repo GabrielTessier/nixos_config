@@ -1,0 +1,20 @@
+#+title: NixOS Config
+#+author: Gabriel TESSIER
+
+** Modules
+
+I have my modules separated into two subdirectories:
+- System-level - stored in the [[./modules/system][system directory]]
+- User-level - stored in the [[./modules/user][user directory]]
+
+** Hosts
+
+Configurations for all machines are in [[./hosts][hosts]].
+
+** Install
+
+Set the =nix-folder= in [[./flake.nix][flake.nix]] (the result of =pwd=)
+
+Configure your hosts in [[./hosts][hosts]].
+
+Rebuild your system : =sudo nixos-rebuild switch --flake /path/to/this/folder=
