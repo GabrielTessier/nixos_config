@@ -1,5 +1,6 @@
 { config, lib, pkgs, ...}:
 let
+  # Do not modify
   users = builtins.filter (x: x != null) (lib.mapAttrsToList (name: value:
     if (value == "directory") then
       name
@@ -9,6 +10,7 @@ let
 in
 {
   config = {
+    # Set all system settings (can be modified)
     systemSettings = {
       users = users;
       adminUsers = [ "admin" ];
@@ -21,6 +23,7 @@ in
       adblock.enable = true;
     };
 
+    # Print list of users when rebuild (can be deleted)
     system.activationScripts.nixosBuildLog = {
       text = ''
         echo users : ${lib.concatStringsSep ", " users};
