@@ -1,0 +1,7 @@
+#+title: Host template
+
+This folder contains four things :
+- [[./default.nix][default.nix]] (DO NOT MODIFY) : imports the [[./configuration.nix][configuration]] and the [[./fileSystems.nix][file systems]]
+- [[./configuration.nix][configuration.nix]] : contains system settings
+- [[./fileSystems.nix][fileSystems.nix]] : contains the list of all file systems
+- [[./users][users]] : Folder with all users
