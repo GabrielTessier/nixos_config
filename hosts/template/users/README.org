@@ -1,0 +1,5 @@
+#+title: Users template
+
+This folder contains two template users :
+- [[./admin][admin]] : admin user
+- [[./toto][toto]] : not admin user

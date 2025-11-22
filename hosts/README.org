@@ -1,0 +1,5 @@
+#+title: Machines
+
+This directory contains config for each machines.
+
+[[./template][template]] - Template files to use for a new host
