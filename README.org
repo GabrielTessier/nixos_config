@@ -13,6 +13,8 @@ Configurations for all machines are in [[./hosts][hosts]].
 
 ** Install
 
+Run =sudo nix run --option experimental-features "nix-command flakes" nixpkgs#nixos-facter -- -o facter.json=
+
 Set the =nix-folder= in [[./flake.nix][flake.nix]] (the result of =pwd=)
 
 Configure your hosts in [[./hosts][hosts]].
