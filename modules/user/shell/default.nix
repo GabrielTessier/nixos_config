@@ -24,7 +24,7 @@ in {
           upg = "sudo nixos-rebuild switch --upgrade --flake ${flakeDir}";
           nixgc = "sudo nix-collect-garbage -d";
           optimise = "sudo nix-store --optimise";
-          
+
           hms = "home-manager switch --flake ${flakeDir}";
 
           conf = "vim ${flakeDir}/nixos/configuration.nix";
@@ -33,8 +33,6 @@ in {
           ll = "ls -laF";
           se = "sudoedit";
           ff = "fastfetch";
-
-          glog = "git log --all --oneline --decorate --graph";
 
           editor = config.userSettings.spawnEditor;
         };
