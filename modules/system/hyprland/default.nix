@@ -22,7 +22,7 @@ in
         xwayland = {
           enable = true;
         };
-        #portalPackage = pkgs.xdg-desktop-portal-hyprland;
+        portalPackage = pkgs.xdg-desktop-portal-hyprland;
       };
     };
 
