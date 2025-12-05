@@ -133,7 +133,7 @@ in
           animate_manual_resizes = true;
           animate_mouse_windowdragging = true;
           enable_swallow = true;
-          render_ahead_of_time = false;
+          #render_ahead_of_time = false;
           disable_hyprland_logo = true;
         };
 
@@ -174,12 +174,16 @@ in
         };
 
         gestures = {
-          workspace_swipe = true;
-          workspace_swipe_fingers = 3;
+          #workspace_swipe = true;
+          #workspace_swipe_fingers = 3;
           workspace_swipe_invert = true;
           workspace_swipe_distance = 200;
           workspace_swipe_forever = true;
         };
+        gesture = [
+          "3, horizontal, workspace"
+          "3, up, mod: SUPER, fullscreen, maximize"
+        ];
 
         dwindle = {
           pseudotile = true; # master switch for pseudotiling. Enabling is bound to mainMod + P in the keybinds section below

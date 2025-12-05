@@ -12,8 +12,8 @@ in
 
   config = lib.mkIf cfg.enable {
     # Power key should not shut off computer by defaultPower key shuts of
-    services.logind.powerKey = "ignore";
-    
+    services.logind.settings.Login.HandlePowerKey = "ignore";
+
     # Hyprland
     programs = {
       hyprland = {
@@ -69,7 +69,7 @@ in
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-cjk-serif
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       twemoji-color-font
       font-awesome
       powerline
