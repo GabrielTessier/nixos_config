@@ -17,6 +17,11 @@
     };
 
     import-tree.url = "github:vic/import-tree";
+
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
   };
 
   outputs = inputs@{ self, ... }:
@@ -52,6 +57,7 @@
             ];
             specialArgs = {
               inherit inputs;
+              inherit system;
               hostname = host;
             };
           };

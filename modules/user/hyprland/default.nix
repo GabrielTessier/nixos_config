@@ -79,16 +79,18 @@ in
           #"AQ_DRM_DEVICES,${config.home.sessionVariables.AQ_DRM_DEVICES}"
           #"AW_NO_MODIFIERS,1"
         ];
-        exec-once = [
-          "hyprctl setcursor ${config.gtk.cursorTheme.name} ${builtins.toString config.gtk.cursorTheme.size}"
-          "hyprpaper"
-          "wl-paste --type text --watch cliphist store"
-          "wl-paste --type image --watch cliphist store"
-          "udiskie --tray "
-        ]
-        ++ lib.optionals config.userSettings.emacs.enable ["emacs --daemon"]
-        ++ lib.optionals config.userSettings.waybar.enable ["waybar"]
-        ++ lib.optionals config.userSettings.swaync.enable ["swaync"];
+        exec-once =
+          lib.optionals config.userSettings.caelestia.enable ["caelestia-shell -d"]
+          ++ [
+            "hyprctl setcursor ${config.gtk.cursorTheme.name} ${builtins.toString config.gtk.cursorTheme.size}"
+            "hyprpaper"
+            "wl-paste --type text --watch cliphist store"
+            "wl-paste --type image --watch cliphist store"
+            "udiskie --tray "
+          ]
+          ++ lib.optionals config.userSettings.emacs.enable ["emacs --daemon"]
+          ++ lib.optionals config.userSettings.waybar.enable ["waybar"]
+          ++ lib.optionals config.userSettings.swaync.enable ["swaync"];
 
 
         general = {
