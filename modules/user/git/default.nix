@@ -16,16 +16,19 @@ in {
     ];
     programs.git = {
       enable = true;
-      userName = config.userSettings.fullname;
-      userEmail = config.userSettings.email;
       ignores = [
         "*~"
         ".swp"
       ];
-      aliases = {
-        glog = "log --all --oneline --decorate --graph";
-      };
-      extraConfig = {
+      settings = {
+        user = {
+          name = config.userSettings.fullname;
+          email = config.userSettings.email;
+        };
+        alias = {
+          glog = "log --all --oneline --decorate --graph";
+        };
+
         init.defaultBranch = "master";
         safe.directory = [ nix-folder ];
         commit.verbose = true;
