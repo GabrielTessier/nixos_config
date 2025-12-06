@@ -39,11 +39,12 @@ in
     {
       enable = true;
       extraPortals = with pkgs;
-      [
-        xdg-desktop-portal-hyprland
-        #xdg-desktop-portal-wlr
-        #xdg-desktop-portal-termfilechooser
-      ];
+        [
+          xdg-desktop-portal
+          xdg-desktop-portal-hyprland
+          xdg-desktop-portal-wlr
+          #xdg-desktop-portal-termfilechooser
+        ];
     };
 
     #xdg.portal.config.common = {

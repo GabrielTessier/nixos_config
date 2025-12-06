@@ -28,6 +28,8 @@ in
 
     # Necessary packages
     environment.systemPackages = with pkgs; [
+      xdg-desktop-portal
+      xdg-desktop-portal-wlr
       xdg-desktop-portal-hyprland
       xdg-desktop-portal-gtk
       udiskie
