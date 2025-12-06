@@ -20,6 +20,7 @@ in {
     programs.kitty.keybindings = {
       "ctrl+equal" = "change_font_size all +2.0";
       "ctrl+minus" = "change_font_size all -2.0";
+      "ctrl+shift+t" = "new_tab_with_cwd";
     };
   };
 }
