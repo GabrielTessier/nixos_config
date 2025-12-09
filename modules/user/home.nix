@@ -6,6 +6,7 @@ in
 {
   home.packages = (with pkgs; [
     bat
+    fd
   ]);
 
   home.file."wallpaper".source = wallpaper;
