@@ -24,10 +24,14 @@ in
     };
     home.file.".emacs.d/resources".source = ./configuration/resources;
     home.file.".emacs.d/themes".source = ./configuration/themes;
-    
+
     programs.emacs = {
       enable = true;
       extraConfig = ''(load-file (expand-file-name "my_init.el" user-emacs-directory))'';
     };
+
+    home.packages = (with pkgs; [
+      mermaid-cli
+    ]);
   };
 }
