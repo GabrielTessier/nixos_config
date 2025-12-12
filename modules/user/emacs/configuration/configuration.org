@@ -772,13 +772,14 @@ I'll also occasionally use =pwgen= to generate and insert a secure password.
 - When hitting =C-<return>= to create a new heading, don't insert the heading between the current heading and its content, but instead append it /after/ the content.
 
 #+begin_src emacs-lisp
-  (use-package org
-    :custom
-    (org-auto-align-tags nil)
-    (org-footnote-auto-label nil)
-    (org-footnote-section nil)
-    (org-insert-heading-respect-content t)
-    (org-tags-column 0))
+    (use-package org
+      :custom
+      (org-auto-align-tags nil)
+      (org-footnote-auto-label nil)
+      (org-footnote-section nil)
+      (org-insert-heading-respect-content t)
+      (org-tags-column 0)
+      (add-hook 'org-mode-hook (org-redisplay-inline-images)))
 #+end_src
 
 Including =org-tempo= restores the =<s=-style easy templates that were deprecated in Org 9.2. This also adds a =<el= template to quickly insert a block of Emacs lisp.
@@ -814,6 +815,15 @@ I rarely write =LaTeX= directly any more, but I often export through it with =Or
                 (setq TeX-master t))))
 #+end_src
 
+* Mermaid org mode
+#+begin_src emacs-lisp
+  (use-package ob-mermaid
+    :ensure t)
+
+  (add-to-list 'org-babel-load-languages '(mermaid . t))
+  (setq org-startup-with-inline-images t)
+  (add-hook 'org-babel-after-execute-hook 'org-display-inline-images)
+#+end_src
 * Writing prose
 
 I write prose in several modes: I might be editing an Org document, or a commit message, or an email. These are the main ones, with sub-items being /derived/ from their parents:
