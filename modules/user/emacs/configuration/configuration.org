@@ -114,6 +114,12 @@ There's a tiny scroll bar that appears in the minibuffer window. This disables t
   (set-window-scroll-bars (minibuffer-window) nil nil)
 #+end_src
 
+Add line number
+
+#+begin_src emacs-lisp
+  (global-display-line-numbers-mode 1)
+#+end_src
+
 ** Disable the visible bell
 
 #+begin_src emacs-lisp
