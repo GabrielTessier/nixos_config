@@ -200,7 +200,7 @@ in
           "$mainMod, Return, exec, ${terminal}"
           "$mainMod, Q, killactive,"
           #"$mainMod, M, exit,"
-	        "$mainMod CTRL, E, exec, rofi -modi emoji -show emoji -kb-secondary-copy \"\" -kb-custom-1 Ctrl+c"
+	        "$mainMod CTRL, E, exec, emoji-script"
           "$mainMod, F, fullscreen, 0"
 	        "$mainMod, M, fullscreen, 1"
 	        "$mainMod, T, togglefloating,"

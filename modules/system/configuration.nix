@@ -4,6 +4,7 @@
     # Packages
     environment.systemPackages = with pkgs; [
       git
+      (import ./scripts/_emoji-script.nix { inherit pkgs; })
     ];
 
     # Journal
