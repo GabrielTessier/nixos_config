@@ -14,7 +14,7 @@ in
       enable = true;
       settings = {
         prompt = "Search";
-	      allow_images = true;
+        allow_images = true;
         image_size = 50;
         width = "75%";
         height = "75%";
@@ -25,7 +25,7 @@ in
         insensitive = true;
         columns = 5;
         no_actions = true;
-	      matching = "fuzzy";
+        matching = "contains";
       };
       style = ./style.css;
     };
