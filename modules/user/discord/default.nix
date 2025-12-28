@@ -5,16 +5,12 @@ in
 {
   options = {
     userSettings.discord = {
-      enable = lib.mkEnableOption "Enable emacs";
+      enable = lib.mkEnableOption "Enable discord";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    nixpkgs.config.allowUnfreePredicate = (pkg:
-      builtins.elem (pkg.pname or (builtins.parseDrvName pkg.name).name) [
-        "discord"
-      ]
-    );
+    userSettings.allowUnfree = [ "discord" ];
     home.packages = (with pkgs; [
       discord
     ]);
