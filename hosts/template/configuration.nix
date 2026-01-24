@@ -24,7 +24,7 @@ in
     };
 
     # Print list of users when rebuild (can be deleted)
-    system.activationScripts.nixosBuildLog = {
+    stdenv.hostPlatform.system.activationScripts.nixosBuildLog = {
       text = ''
         echo users : ${lib.concatStringsSep ", " users};
       '';
