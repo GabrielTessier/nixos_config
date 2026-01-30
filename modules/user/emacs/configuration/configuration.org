@@ -453,11 +453,11 @@ Use LSP with java.
     :ensure t
     :config (add-hook 'java-mode-hook 'lsp))
 
-  (use-package dap-java
-    :ensure t)
+  (use-package dap-java)
+    ;; :ensure t)
 
   (use-package java-mode
-    :ensure t
+    ;; :ensure t
     :hook (java-mode . lsp))
 
   (defun tkj/default-code-style-hook()
