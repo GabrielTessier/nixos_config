@@ -7,8 +7,8 @@ I use =use-package= to install and configure my packages.
 I should be able to open Emacs for the first time and have my whole environment automatically installed. I'm not /totally/ sure about that, but we're gettin' close.
 
 #+begin_src emacs-lisp
-  (require 'use-package-ensure)
-  (setq use-package-always-ensure t)
+  ;; (require 'use-package-ensure)
+  ;; (setq use-package-always-ensure t)
 #+end_src
 
 Defer loading packages unless explicitly demanded.
@@ -21,6 +21,7 @@ Always compile packages, and use the newest version available.
 
 #+begin_src emacs-lisp
   (use-package auto-compile
+    :ensure t
     :demand t
     :config (auto-compile-on-load-mode))
 
@@ -45,6 +46,7 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 
 #+begin_src emacs-lisp
   (use-package sensible-defaults
+    :ensure t
     :vc (:url "https://github.com/hrs/sensible-defaults.el.git"
               :rev :newest)
     :demand t
@@ -134,6 +136,7 @@ This sets up the current theme.
   (load-theme 'witchhazel t)
 
   (use-package catppuccin-theme
+    :ensure t
     :demand t
     :custom
     (catppuccin-flavor 'macchiato)
@@ -148,6 +151,7 @@ I never want to see a minor mode, and manually adding =:diminish= to every use-p
 
 #+begin_src emacs-lisp
   (use-package minions
+    :ensure t
     :demand t
 
     :custom
@@ -192,6 +196,7 @@ This changes scrolling behavior to only scroll 10 lines.
                       :height +font-size-variable)
 
   (use-package default-text-scale
+    :ensure t
     :bind
     (("C-)" . default-text-scale-reset)
      ("C-=" . default-text-scale-increase)
@@ -212,6 +217,7 @@ Use the =diff-hl= package to highlight changed-and-uncommitted lines when progra
 
 #+begin_src emacs-lisp
   (use-package diff-hl
+    :ensure t
     :config
     :hook ((text-mode prog-mode vc-dir-mode) . turn-on-diff-hl-mode))
 #+end_src
@@ -235,6 +241,7 @@ Use =corfu= for a pop-up completions menu.
 
 #+begin_src emacs-lisp
   (use-package corfu
+    :ensure t
     :bind
     (:map corfu-map
           ("TAB" . corfu-next)
@@ -259,6 +266,7 @@ When using =ediff= to compare file, show files side by side and don't split the 
 
 #+begin_src emacs-lisp
   (use-package ediff
+    :ensure t
     :config
     (setq ediff-window-setup-function 'ediff-setup-windows-plain)
     (setq ediff-split-window-function 'split-window-horizontally))
@@ -272,6 +280,7 @@ When using =ediff= to compare file, show files side by side and don't split the 
 
 #+begin_src emacs-lisp
   (use-package magit
+    :ensure t
     :ensure-system-package (git git-absorb)
     :bind ("C-x g" . magit-status)
 
@@ -299,7 +308,8 @@ When using =ediff= to compare file, show files side by side and don't split the 
 =git-timemachine= lets you quickly page through the history of a file.
 
 #+begin_src emacs-lisp
-  (use-package git-timemachine)
+  (use-package git-timemachine
+    :ensure t)
 #+end_src
 
 * Programming environments
@@ -314,6 +324,7 @@ Treating terms in CamelCase symbols as separate words makes editing a little eas
 
 #+begin_src emacs-lisp
   (use-package subword
+    :ensure t
     :config (global-subword-mode 1))
 #+end_src
 
@@ -327,7 +338,8 @@ Compilation output goes to the =*compilation*= buffer. I rarely have that window
 
 #+begin_src emacs-lisp
   (use-package which-key
-  	:config (which-key-mode))
+    :ensure t
+    :config (which-key-mode))
 #+end_src
 
 ** =lsp-mode=
@@ -336,33 +348,35 @@ I'm using =lsp-mode= to manage my LSP servers.
 
 #+begin_src emacs-lisp
   (use-package lsp-mode
-  	:ensure t
-  	:defer t
-  	:hook ((lsp-mode . lsp-enable-which-key-integration)
-  				 (lsp-mode . (lambda ()
-  											 (let ((lsp-keymap-prefix "C-c l"))
-  												 (lsp-enable-which-key-integration)))))
-  	;; :init
-  	;; (setq lsp-keep-workspace-alive nil
-  	;; 			lsp-signature-doc-lines 5
-  	;; 			lsp-idle-delay 0.5
-  	;; 			lsp-prefer-capf t)
-  	:config
-  	(define-key lsp-mode-map (kbd "C-c l") lsp-command-map)))
+    :ensure t
+    :defer t
+    :hook ((lsp-mode . lsp-enable-which-key-integration)
+  	 (lsp-mode . (lambda ()
+  		       (let ((lsp-keymap-prefix "C-c l"))
+  			 (lsp-enable-which-key-integration)))))
+    ;; :init
+    ;; (setq lsp-keep-workspace-alive nil
+    ;; 			lsp-signature-doc-lines 5
+    ;; 			lsp-idle-delay 0.5
+    ;; 			lsp-prefer-capf t)
+    :config
+    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)))
 #+end_src
 
 ** Debug Adapter Protocol
 
 #+begin_src emacs-lisp
   (use-package dap-mode
-  	:after lsp-mode
-  	:config (dap-auto-configure-mode))
+    :ensure t
+    :after lsp-mode
+    :config (dap-auto-configure-mode))
 #+end_src
 
 ** =direnv=
 
 #+begin_src emacs-lisp
   (use-package direnv
+    :ensure t
     ;;:custom
     ;;(direnv-always-show-summary nil)
 
@@ -402,7 +416,8 @@ Similarly, I bind =C-BACKTAB= to toggle hiding /all/ the top-level code blocks.
 Add syntax highlighting to =cron= files.
 
 #+begin_src emacs-lisp
-  (use-package crontab-mode)
+  (use-package crontab-mode
+    :ensure t)
 #+end_src
 
 ** CSS & Sass
@@ -411,6 +426,7 @@ Indent by 2 spaces.
 
 #+begin_src emacs-lisp
   (use-package css-mode
+    :ensure t
     :config
     (setq css-indent-offset 2))
 #+end_src
@@ -419,6 +435,7 @@ Don't compile the current SCSS file every time I save.
 
 #+begin_src emacs-lisp
   (use-package scss-mode
+    :ensure t
     :config
     (setq scss-compile-at-save nil))
 #+end_src
@@ -429,16 +446,19 @@ Use LSP with java.
 
 #+begin_src emacs-lisp
   (setq eldoc-echo-area-use-multiline-p nil)
-  (use-package eldoc-box)
+  (use-package eldoc-box
+    :ensure t)
 
   (use-package lsp-java
-  	:ensure t
-  	:config (add-hook 'java-mode-hook 'lsp))
+    :ensure t
+    :config (add-hook 'java-mode-hook 'lsp))
 
-  (use-package dap-java)
+  (use-package dap-java
+    :ensure t)
 
   (use-package java-mode
-  	:hook (java-mode . lsp))
+    :ensure t
+    :hook (java-mode . lsp))
 
   (defun tkj/default-code-style-hook()
     (setq c-basic-offset 2
@@ -510,6 +530,7 @@ Use LSP with java.
 
 #+begin_src emacs-lisp
   (use-package rainbow-delimiters
+    :ensure t
     :hook ((emacs-lisp-mode lisp-mode racket-mode) . rainbow-delimiters-mode))
 #+end_src
 
@@ -519,6 +540,7 @@ If I'm writing in Emacs Lisp I'd like to use =eldoc-mode= to display documentati
 
 #+begin_src emacs-lisp
   (use-package eldoc
+    :ensure t
     :hook (emacs-lisp-mode . eldoc-mode))
 #+end_src
 
@@ -542,7 +564,8 @@ Bind running tests to =C-c , v=, like in =rspec-mode=.
 I use =package-lint= to verify that my packages are linted.
 
 #+begin_src emacs-lisp
-  (use-package package-lint)
+  (use-package package-lint
+    :ensure t)
 #+end_src
 
 ** OCaml
@@ -551,6 +574,7 @@ Use =tuareg-mode= for editing OCaml.
 
 #+begin_src emacs-lisp
   (use-package tuareg
+    :ensure t
     :ensure-system-package opam
 
     :config
@@ -561,6 +585,7 @@ Configure Merlin. This also requires installing the Merlin package through OPAM 
 
 #+begin_src emacs-lisp
   (use-package merlin
+    :ensure t
     :after tuareg-mode
     :hook (tuareg-mode . merlin-mode))
 #+end_src
@@ -569,6 +594,7 @@ Configure Merlin. This also requires installing the Merlin package through OPAM 
 
 #+begin_src emacs-lisp
   (use-package python-mode
+    :ensure t
     :hook (python-mode . lsp))
 #+end_src
 
@@ -576,6 +602,7 @@ Enable =elpy=. This provides automatic indentation, auto-completion, syntax chec
 
 #+begin_src emacs-lisp
   (use-package elpy
+    :ensure t
     :after python-mode
 
     :custom
@@ -589,6 +616,7 @@ Format code according to PEP8 on save:
 
 #+begin_src emacs-lisp
   (use-package py-autopep8
+    :ensure t
     :after python-mode
     :hook (elpy-mode-hook . py-autopep8-enable-on-save))
 #+end_src
@@ -610,6 +638,7 @@ Use =web-mode= with embedded Ruby files, regular HTML, and PHP.
 
 #+begin_src emacs-lisp
   (use-package web-mode
+    :ensure t
     :mode ("\\.erb$"
            "\\.html$"
            "\\.php$"
@@ -626,6 +655,7 @@ I'd like to see colors with =rainbow-mode=, so we'll need to install that, too:
 
 #+begin_src emacs-lisp
   (use-package rainbow-mode
+    :ensure t
     :hook web-mode)
 #+end_src
 
@@ -633,7 +663,8 @@ I'd like to see colors with =rainbow-mode=, so we'll need to install that, too:
 
 #+begin_src emacs-lisp
   (use-package nix-mode
-  	:hook (nix-mode . lsp))
+    :ensure t
+    :hook (nix-mode . lsp))
 #+end_src
 
 * Terminal
@@ -642,6 +673,7 @@ I'm trying =vterm=. This disables =global-hl-line-mode= locally and lets me open
 
 #+begin_src emacs-lisp
   (use-package multi-vterm
+    :ensure t
     :ensure-system-package (cmake
                             ("/usr/share/doc/libvterm-dev" . libvterm-dev))
     :commands (multi-vterm)
@@ -659,14 +691,15 @@ I'm trying =vterm=. This disables =global-hl-line-mode= locally and lets me open
 - When hitting =C-<return>= to create a new heading, don't insert the heading between the current heading and its content, but instead append it /after/ the content.
 
 #+begin_src emacs-lisp
-    (use-package org
-      :custom
-      (org-auto-align-tags nil)
-      (org-footnote-auto-label nil)
-      (org-footnote-section nil)
-      (org-insert-heading-respect-content t)
-      (org-tags-column 0)
-      (add-hook 'org-mode-hook (org-redisplay-inline-images)))
+  (use-package org
+    :ensure t
+    :custom
+    (org-auto-align-tags nil)
+    (org-footnote-auto-label nil)
+    (org-footnote-section nil)
+    (org-insert-heading-respect-content t)
+    (org-tags-column 0)
+    (add-hook 'org-mode-hook (org-redisplay-inline-images)))
 #+end_src
 
 Including =org-tempo= restores the =<s=-style easy templates that were deprecated in Org 9.2. This also adds a =<el= template to quickly insert a block of Emacs lisp.
@@ -690,6 +723,7 @@ I rarely write =LaTeX= directly any more, but I often export through it with =Or
 
 #+begin_src emacs-lisp
   (use-package auctex
+    :ensure t
     :custom
     (TeX-parse-self t)
 
@@ -750,58 +784,58 @@ This minor mode enables a distraction-free writing environment. It enables a who
 
 #+begin_src emacs-lisp
   (use-package mixed-pitch)
-(use-package olivetti)
-(use-package org-appear :after org)
-(use-package org-modern :after org)
-(use-package org-superstar :after org)
+  (use-package olivetti)
+  (use-package org-appear :after org)
+  (use-package org-modern :after org)
+  (use-package org-superstar :after org)
 
-(use-package wc-mode
-  :custom
-  (wc-modeline-format "[%tw words]")
+  (use-package wc-mode
+    :custom
+    (wc-modeline-format "[%tw words]")
 
-  :config
-  (unbind-key "C-c C-w" wc-mode-map)
-  (add-to-list 'minions-prominent-modes 'wc-mode))
-
-(use-package writing-mode
-  :load-path "resources"
-  :defer 1
-  :hook (org-mode . writing-mode-repo)
-  :bind (([f9] . writing-mode)
-         ("<XF86Messenger>" . writing-mode)
-         ("<XF86Tools>" . writing-mode))
-
-  :config
-  (require 'mixed-pitch)
-  (require 'olivetti)
-  (require 'org-appear)
-  (require 'org-indent)
-  (require 'org-modern)
-  (require 'org-superstar)
-  (require 'wc-mode)
-
-  (defun writing-mode-repo () (writing-mode 1))
-
-  (setq writing-enabled-modes
-        '((org-mode . (org-appear-mode
-                       org-indent-mode
-                       org-modern-mode
-                       org-superstar-mode))
-          (elfeed-show-mode . (mixed-pitch-mode
-                               olivetti-mode))
-          (special-mode . (mixed-pitch-mode
-                           olivetti-mode))
-          (text-mode . (mixed-pitch-mode
-                        olivetti-mode
-                        prettify-symbols-mode
-                        visual-line-mode
-                        wc-mode)))))
-
-  (use-package publish-mode
-    :load-path "resources"
-    :bind ([f8] . publish-build-and-view-pdf)
     :config
-    (setq publish-viewer-pdf "evince"))
+    (unbind-key "C-c C-w" wc-mode-map)
+    (add-to-list 'minions-prominent-modes 'wc-mode))
+
+  (use-package writing-mode
+    :load-path "resources"
+    :defer 1
+    :hook (org-mode . writing-mode-repo)
+    :bind (([f9] . writing-mode)
+           ("<XF86Messenger>" . writing-mode)
+           ("<XF86Tools>" . writing-mode))
+
+    :config
+    (require 'mixed-pitch)
+    (require 'olivetti)
+    (require 'org-appear)
+    (require 'org-indent)
+    (require 'org-modern)
+    (require 'org-superstar)
+    (require 'wc-mode)
+
+    (defun writing-mode-repo () (writing-mode 1))
+
+    (setq writing-enabled-modes
+          '((org-mode . (org-appear-mode
+                         org-indent-mode
+                         org-modern-mode
+                         org-superstar-mode))
+            (elfeed-show-mode . (mixed-pitch-mode
+                                 olivetti-mode))
+            (special-mode . (mixed-pitch-mode
+                             olivetti-mode))
+            (text-mode . (mixed-pitch-mode
+                          olivetti-mode
+                          prettify-symbols-mode
+                          visual-line-mode
+                          wc-mode)))))
+
+    (use-package publish-mode
+      :load-path "resources"
+      :bind ([f8] . publish-build-and-view-pdf)
+      :config
+      (setq publish-viewer-pdf "evince"))
 #+end_src
 
 ** Editing with Markdown
@@ -876,6 +910,7 @@ The =helpful= package provides, among other things, more context in Help buffers
 
 #+begin_src emacs-lisp
   (use-package helpful
+    :ensure t
     :commands (helpful-callable helpful-variable helpful-key)
     :bind
     ("C-h f" . helpful-callable)
@@ -910,6 +945,7 @@ Never use tabs. Tabs are the devil's whitespace.
 #+begin_src emacs-lisp
   (use-package which-key
     :demand t
+    :ensure t
     :config (which-key-mode))
 #+end_src
 
@@ -919,6 +955,7 @@ I'm trying =vertico=, =orderless=, =consult=, and =marginalia= as my completion 
 
 #+begin_src emacs-lisp
   (use-package vertico
+    :ensure t
     :bind (:map vertico-map
                 ("RET" . vertico-directory-enter)
                 ("DEL" . vertico-directory-delete-char)
@@ -929,17 +966,20 @@ I'm trying =vertico=, =orderless=, =consult=, and =marginalia= as my completion 
 
   (use-package savehist
     :demand t
+    :ensure t
     :init
     (savehist-mode))
 
   (use-package orderless
     :demand t
+    :ensure t
     :custom
     (completion-styles '(orderless basic))
     (completion-category-defaults nil)
     (completion-category-overrides '((file (styles basic partial-completion)))))
 
   (use-package consult
+    :ensure t
     :bind
     (("M-i" . consult-imenu)
      ("C-x b" . consult-buffer)
@@ -950,6 +990,7 @@ I'm trying =vertico=, =orderless=, =consult=, and =marginalia= as my completion 
     (setq completion-in-region-function #'consult-completion-in-region))
 
   (use-package marginalia
+    :ensure t
     :bind (:map minibuffer-local-map
                 ("M-A" . marginalia-cycle))
 
@@ -977,7 +1018,8 @@ When splitting a window, I invariably want to switch to the new window. This mak
 I like the idea of mass editing =grep= results the same way I can edit filenames in =dired=. These keybindings allow me to use =C-x C-q= to start editing =grep= results and =C-c C-c= to stop, just like in =dired=.
 
 #+begin_src emacs-lisp
-  (use-package wgrep)
+  (use-package wgrep
+    :ensure t)
 
   (eval-after-load 'grep
     '(define-key grep-mode-map
