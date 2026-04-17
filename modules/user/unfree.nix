@@ -12,7 +12,7 @@
 
   config = {
     nixpkgs.config.allowUnfreePredicate = (pkg:
-      builtins.elem (pkg.pname or (builtins.parseDrvName pkg.name).name) config.userSettings.allowUnfree
+      builtins.elem (lib.getName pkg) config.userSettings.allowUnfree
     );
   };
 }

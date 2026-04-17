@@ -3,14 +3,10 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.11";
-    nixpkgs-unstable = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    #nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
 
     nixos-facter-modules = {
       url = "github:numtide/nixos-facter-modules";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     home-manager = {
@@ -25,17 +21,16 @@
 
     import-tree = {
       url = "github:vic/import-tree";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     caelestia-shell = {
       url = "github:caelestia-dots/shell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     noctalia = {
       url = "github:noctalia-dev/noctalia-shell";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     disko = {
