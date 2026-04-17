@@ -10,6 +10,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    userSettings.desktop.startupApps = [
+      "emacs --daemon"
+    ];
+
     # Utilisation de home-manager pour copier les fichiers configurations
     home.file.".emacs.d/old_config" = {
       source = ./conf_file;

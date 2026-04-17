@@ -13,5 +13,8 @@ in {
       inputs.caelestia-shell.packages."x86_64-linux".default
     ];
     home.file.".config/caelestia/shell.json".source = ./shell.json;
+    userSettings.desktop.startupApps = [
+      "caelestia-shell -d"
+    ];
   };
 }

@@ -6,6 +6,21 @@ let
   spawnEditor = config.userSettings.spawnEditor;
   spawnBrowser = config.userSettings.spawnBrowser;
   spawnBrowserPrivate = config.userSettings.spawnBrowserPrivate;
+
+  useNoctalia = config.userSettings.noctalia.enable;
+  useWlogout = config.userSettings.wlogout.enable && !useNoctalia;
+
+  lockCmd =
+    if useNoctalia
+    then "noctalia-shell ipc call lockScreen lock"
+    else "hyprlock";
+
+  sessionCmd =
+    if useNoctalia
+    then "noctalia-shell ipc call sessionMenu toggle"
+    else (if useWlogout
+          then "pkill wlogout || wlogout"
+          else "hyprctl dispatch exit");
 in
 {
   options = {
@@ -76,29 +91,26 @@ in
       settings = {
         "$mainMod" = "SUPER";
 
-        monitor = "eDP-1,1920x1200,auto,1";
+        monitor = "eDP-1,1920x1200,0x0,1";
 
         env = [
           #"AQ_DRM_DEVICES,${config.home.sessionVariables.AQ_DRM_DEVICES}"
           #"AW_NO_MODIFIERS,1"
         ];
         exec-once =
-          lib.optionals config.userSettings.caelestia.enable ["caelestia-shell -d"]
+          config.userSettings.desktop.startupApps
           ++ [
             "hyprctl setcursor ${config.gtk.cursorTheme.name} ${builtins.toString config.gtk.cursorTheme.size}"
             "hyprpaper"
             "wl-paste --type text --watch cliphist store"
             "wl-paste --type image --watch cliphist store"
-            "udiskie --tray "
-          ]
-          ++ lib.optionals config.userSettings.emacs.enable ["emacs --daemon"]
-          ++ lib.optionals config.userSettings.waybar.enable ["waybar"]
-          ++ lib.optionals config.userSettings.swaync.enable ["swaync"];
-
+            "udiskie --tray"
+            #"hypridle"
+          ];
 
         general = {
           gaps_in = 5;
-          gaps_out = 10;
+          gaps_out = 5;
           border_size = 3;
           "col.active_border" = "rgba(33ccffee) rgba(00ff99ee) 45deg";
           "col.inactive_border" = "rgba(595959aa)";
@@ -118,13 +130,14 @@ in
 
         decoration = {
           rounding = 10;
+          rounding_power = 2;
 
-          blur = {
-            enabled = true;
-            size = 16;
-            passes = 2;
-            new_optimizations = true;
-          };
+          # blur = {
+          #   enabled = true;
+          #   size = 16;
+          #   passes = 2;
+          #   new_optimizations = true;
+          # };
 
           #drop_shadow = true;
           #shadow_range = 4;
@@ -196,7 +209,9 @@ in
         bind = [
           "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
 
-	        "$mainMod, L, exec, hyprlock"
+          "$mainMod CTRL, Q, exec, ${sessionCmd}"
+          ", XF86PowerOff, exec, ${sessionCmd}"
+          "$mainMod, L, exec, ${lockCmd}"
 
           "$mainMod, Return, exec, ${terminal}"
           "$mainMod, Q, killactive,"
@@ -206,8 +221,8 @@ in
 	        "$mainMod, M, fullscreen, 1"
 	        "$mainMod, T, togglefloating,"
           "$mainMod CTRL, RETURN, exec, pkill wofi || wofi --show drun"
-          "$mainMod, P, pseudo, #dwindle"
-          "$mainMod, J, togglesplit, #dwindle"
+          "$mainMod, P, pseudo,"
+          "$mainMod, J, togglesplit,"
 
           # Move focus with mainMod + arrow keys
           "$mainMod, left,  movefocus, l"
@@ -246,14 +261,15 @@ in
           ", XF86AudioMicMute, exec, pamixer --default-source -m"
 
           # Brightness control
-          ", XF86MonBrightnessDown, exec, brightnessctl set 5%- "
-          ", XF86MonBrightnessUp, exec, brightnessctl set +5% "
+          ", XF86MonBrightnessDown, exec, brightnessctl set 5%-"
+          ", XF86MonBrightnessUp, exec, brightnessctl set +5%"
 
-          # Configuration files
-          #''$mainMod SHIFT, N, exec, alacritty -e sh -c "rb"''
-          #''$mainMod SHIFT, C, exec, alacritty -e sh -c "conf"''
-          #''$mainMod SHIFT, H, exec, alacritty -e sh -c "nvim ~/nix/home-manager/modules/wms/hyprland.nix"''
-          #''$mainMod SHIFT, W, exec, alacritty -e sh -c "nvim ~/nix/home-manager/modules/wms/waybar.nix''
+          #"SHIFT, XF86MonBrightnessDown, exec, ddcutil setvcp 10 $(($(brightnessctl get) * 100 / $(brightnessctl max)))"
+          #"SHIFT, XF86MonBrightnessUp, exec, ddcutil setvcp 10 $(($(brightnessctl get) * 100 / $(brightnessctl max)))"
+          "SHIFT, XF86MonBrightnessDown, exec, ddcutil setvcp 10 - 10"
+          "SHIFT, XF86MonBrightnessUp, exec, ddcutil setvcp 10 + 10"
+          "$mainMod, F7, exec, ddcutil setvcp 10 100"
+
 
           # Screenshot
           '', Print, exec, grim -g "$(slurp)" - | swappy -f -''
@@ -273,10 +289,6 @@ in
         ]
         ++ lib.optionals (spawnEditor != "") [
           "$mainMod, E, exec, ${spawnEditor}"
-        ]
-        ++ lib.optionals (config.userSettings.wlogout.enable) [
-          "$mainMod CTRL, Q, exec, pkill wlogout || wlogout"
-          ", XF86PowerOff, exec, pkill wlogout || wlogout"
         ]
         ++ (
           # workspaces
@@ -324,6 +336,7 @@ in
           no_donation_nag = true;
         };
 
+        source = "/etc/nixos/hyprland/screen.conf";
       };
       systemd.variables = ["--all"];
       xwayland = { enable = true; };
@@ -336,7 +349,7 @@ in
       wl-clipboard
       hyprland-protocols
       hyprlock
-      hypridle
+      #hypridle
       hyprpaper
 
       # audio
@@ -363,6 +376,17 @@ in
         wallpaper = [ ",~/wallpaper/wallpaper.png" ];
       };
     };
+    # services.hypridle = {
+    #   enable = true;
+    #   settings = {
+    #     listener = [
+    #       {
+    #         timeout = 300;
+    #         on-timeout = "hyprlock";
+    #       }
+    #     ];
+    #   };
+    # };
     userSettings.wofi.enable = true;
     userSettings.gtk.enable = true;
   };

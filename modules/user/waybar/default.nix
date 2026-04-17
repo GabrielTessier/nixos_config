@@ -10,6 +10,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    userSettings.desktop.startupApps = [
+      "waybar"
+    ];
+
     userSettings.swaync.enable = true;
     programs.waybar = {
       enable = true;
@@ -19,7 +23,7 @@ in
           layer = "top";
           position = "top";
           margin = "9 5 0 10";
-          
+
           modules-left = ["hyprland/workspaces" "hyprland/language" "keyboard-state" "hyprland/submap" ];
           modules-center = ["clock" ];
           modules-right = [ "pulseaudio" "bluetooth" "custom/mem" "cpu" "backlight" "battery" "tray" "custom/notification"];

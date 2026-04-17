@@ -180,8 +180,8 @@ This changes scrolling behavior to only scroll 10 lines.
 ** Set font and configure font resizing
 
 #+begin_src emacs-lisp
-  (defvar +font-size-fixed 140)
-  (defvar +font-size-variable 130)
+  (defvar +font-size-fixed 105)
+  (defvar +font-size-variable 95)
 
   (set-face-attribute 'default nil
                       :family "JetBrains Mono"
@@ -418,6 +418,17 @@ Add syntax highlighting to =cron= files.
 #+begin_src emacs-lisp
   (use-package crontab-mode
     :ensure t)
+#+end_src
+
+** eglot
+
+#+begin_src emacs-lisp
+  (use-package eglot
+    :ensure t
+    :hook (((c-mode) . eglot-ensure))
+    :config
+    (defun +eglot-format-buffer-on-save ()
+      (add-hook 'before-save-hook #'eglot-format-buffer -10 t)))
 #+end_src
 
 ** CSS & Sass

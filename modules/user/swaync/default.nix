@@ -10,6 +10,10 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    userSettings.desktop.startupApps = [
+      "swaync"
+    ];
+
     services.swaync = {
       enable = true;
       style = ./style.css;

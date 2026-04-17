@@ -22,6 +22,16 @@
       url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
+
+    noctalia = {
+      url = "github:noctalia-dev/noctalia-shell";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
+    };
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, ... }:
@@ -38,6 +48,11 @@
           value = inputs.nixpkgs.lib.nixosSystem {
             inherit system;
             modules = [
+              inputs.disko.nixosModules.disko
+              # {
+              #   inputs.disko.devices.main.device = inputs.nixpkgs.lib.mkForce "/dev/nvme0n1";
+              # }
+
               { config.networking.hostName = host; }
               (./hosts + "/${host}")
               (inputs.import-tree ./modules/system)

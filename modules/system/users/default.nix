@@ -15,11 +15,13 @@
   };
   config = {
 
+    #users.groups.i2c = {};
     users.users = builtins.listToAttrs
       (map (user: {
         name = user;
         value = {
           isNormalUser = true;
+          #extraGroups = [ "networkmanager" "input" "dialout" "video" "render" "i2c" ] ++ (lib.optionals (lib.any (x: x == user) config.systemSettings.adminUsers) [ "wheel" ]);
           extraGroups = [ "networkmanager" "input" "dialout" "video" "render" ] ++ (lib.optionals (lib.any (x: x == user) config.systemSettings.adminUsers) [ "wheel" ]);
           createHome = true;
           initialPassword = "pass";
@@ -36,4 +38,3 @@
       }) config.systemSettings.users);
   };
 }
-
