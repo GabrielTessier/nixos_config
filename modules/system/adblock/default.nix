@@ -4,17 +4,17 @@ let
   file = config.systemSettings.adblock.file;
 
   # Commit fixe du repo github
-  rev = "9a3c9dea3e4700300c8ddca5b091d0008bb619ab";
+  rev = "14f265910f84091ff93495e1973e40f121ec8d63";
   fetch = name: sha256: pkgs.fetchurl {
     url = "https://raw.githubusercontent.com/hagezi/dns-blocklists/${rev}/hosts/${name}-compressed.txt";
     inherit sha256;
   };
   files = {
-    light    = fetch "light"    "sha256-+NtGt2Jf9JgKl2yILoNyXn7Ut98MGBTbm4N07PyR0a4=";
-    normal   = fetch "multi"    "sha256-/X/EXKGis81Yz5UUY+RZjN1SjSIOEtQffZYnUmU4mU8=";
-    pro      = fetch "pro"      "sha256-bAWBvuD1gFQexJEm6X3pk3Kf0l/lfQJEFOVCjwljx8o=";
-    pro-plus    = fetch "pro.plus" "sha256-RyaqnJ/QDj7/s6uj5OSc0bCxe9sjvpmkNxoJbZATg+A=";
-    ultimate = fetch "ultimate" "sha256-c7m4ka5QMPoVg1DQr8jVPgtApT/5Ne0mIx+8wDlF/SQ=";
+    light    = fetch "light"    "sha256-hJc6ouRxM5i48FGPEeZEpyeHJXcKR7aJrNrsRQOyv90=";
+    normal   = fetch "multi"    "sha256-IQoCaTwL8HiKcirb7Dul9YHw3CWfej4d6phuo3sEu5Y=";
+    pro      = fetch "pro"      "sha256-18v9/k05Z5VmO1C+Tt0MsMq4Qiu+fBSs9RPWzqDerXk=";
+    pro-plus    = fetch "pro.plus" "sha256-fert6anu1oeTSVQyTnfXxDMGXOQVlxwVt6TLXNBNGZA=";
+    ultimate = fetch "ultimate" "sha256-PDDgS8Ztx+PJXXC83izzzt+jrpVkYBpaziNKD68v8io=";
   };
 in
 {
