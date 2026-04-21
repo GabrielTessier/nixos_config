@@ -71,6 +71,9 @@ in {
             ];
             right = [
               {
+                id = "Network";
+              }
+              {
                 id = "Tray";
               }
               {
@@ -175,8 +178,8 @@ in {
           boxBorderEnabled = false;
           panelBackgroundOpacity = 0.93;
           translucentWidgets = false;
-          panelsAttachedToBar = true;
-          settingsPanelMode = "attached";
+          panelsAttachedToBar = false;
+          settingsPanelMode = "window";
           settingsPanelSideBarCardStyle = false;
         };
         location = {
