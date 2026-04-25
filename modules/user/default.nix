@@ -21,6 +21,8 @@ let
       (files dir));
 in
 {
+  systemd.user.startServices = "sd-switch"; # faster activation
+
   #imports = map (f: import f args) (importAll ./.);
   imports = importAll ./.;
 }

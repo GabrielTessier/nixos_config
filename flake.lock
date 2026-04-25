@@ -66,26 +66,6 @@
         "type": "github"
       }
     },
-    "grub2-themes": {
-      "inputs": {
-        "nixpkgs": [
-          "nixpkgs"
-        ]
-      },
-      "locked": {
-        "lastModified": 1757136219,
-        "narHash": "sha256-tKU+vq34KHu/A2wD7WdgP5A4/RCmSD8hB0TyQAUlixA=",
-        "owner": "vinceliuice",
-        "repo": "grub2-themes",
-        "rev": "80dd04ddf3ba7b284a7b1a5df2b1e95ee2aad606",
-        "type": "github"
-      },
-      "original": {
-        "owner": "vinceliuice",
-        "repo": "grub2-themes",
-        "type": "github"
-      }
-    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -222,7 +202,6 @@
       "inputs": {
         "caelestia-shell": "caelestia-shell",
         "disko": "disko",
-        "grub2-themes": "grub2-themes",
         "home-manager": "home-manager",
         "import-tree": "import-tree",
         "nixos-facter-modules": "nixos-facter-modules",

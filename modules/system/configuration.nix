@@ -1,4 +1,7 @@
 { config, lib, pkgs, inputs, ... }:
+let
+  locale = config.i18n.defaultLocale;
+in
 {
   config = {
     # Packages
@@ -8,25 +11,21 @@
     ];
 
     # Journal
-    services.journald.extraConfig = "SystemMaxUse=50M\nSystemMaxFiles=5";
-    services.journald.rateLimitBurst = 500;
-    services.journald.rateLimitInterval = "30s";
+    services.journald = {
+      extraConfig = "SystemMaxUse=50M\nSystemMaxFiles=5";
+      rateLimitBurst = 500;
+      rateLimitInterval = "30s";
+    };
 
     # Locale and TZ
     time.timeZone = "Europe/Paris";
     services.timesyncd.enable = lib.mkForce true;
     i18n.defaultLocale = "fr_FR.UTF-8";
-    i18n.extraLocaleSettings = {
-      LC_ADDRESS = config.i18n.defaultLocale;
-      LC_IDENTIFICATION = config.i18n.defaultLocale;
-      LC_MEASUREMENT = config.i18n.defaultLocale;
-      LC_MONETARY = config.i18n.defaultLocale;
-      LC_NAME = config.i18n.defaultLocale;
-      LC_NUMERIC = config.i18n.defaultLocale;
-      LC_PAPER = config.i18n.defaultLocale;
-      LC_TELEPHONE = config.i18n.defaultLocale;
-      LC_TIME = config.i18n.defaultLocale;
-    };
+    i18n.extraLocaleSettings = lib.genAttrs [
+      "LC_ADDRESS" "LC_IDENTIFICATION" "LC_MEASUREMENT" "LC_MONETARY"
+      "LC_NAME"    "LC_NUMERIC"        "LC_PAPER"       "LC_TELEPHONE"
+      "LC_TIME"
+    ] (_: locale);
 
     # Use zsh
     programs.zsh.enable = true;
@@ -44,20 +43,22 @@
         canTouchEfiVariables = true;
         efiSysMountPoint = "/boot";
       };
+      timeout = 2;
       grub = {
         efiSupport = true;
         enable = true;
         device = "nodev";
-      };
-      grub2-theme = {
-        enable = true;
-        theme = "whitesur";
-        footer = true;
+        splashImage = null;
+        backgroundColor = null;
+        theme = null;
       };
     };
 
     # Networking
-    networking.networkmanager.enable = true; # Use networkmanager
+    networking.useDHCP = false;              # disables the global dhcpcd
+    networking.dhcpcd.enable = false;        # force-disable dhcpcd entirely
+    networking.networkmanager.enable = true; # NetworkManager handles DHCP itself
+    systemd.services.NetworkManager-wait-online.enable = false;
 
     # Remove bloat
     programs.nano.enable = lib.mkForce false;

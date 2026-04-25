@@ -14,11 +14,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    grub2-themes = {
-      url = "github:vinceliuice/grub2-themes";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     import-tree = {
       url = "github:vic/import-tree";
     };
@@ -72,8 +67,6 @@
                   hostname = host;
                 };
               }
-
-              inputs.grub2-themes.nixosModules.default
             ];
             specialArgs = {
               inherit inputs;
