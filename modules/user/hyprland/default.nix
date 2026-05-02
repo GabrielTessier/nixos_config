@@ -91,7 +91,7 @@ in
       settings = {
         "$mainMod" = "SUPER";
 
-        monitor = "eDP-1,1920x1200,0x0,1";
+        source = "${config.xdg.configHome}/hypr/screen_profile.conf";
 
         env = [
           #"AQ_DRM_DEVICES,${config.home.sessionVariables.AQ_DRM_DEVICES}"
@@ -335,8 +335,6 @@ in
           no_update_news = true;
           no_donation_nag = true;
         };
-
-        source = "/etc/nixos/hyprland/screen.conf";
       };
       systemd.variables = ["--all"];
       xwayland = { enable = true; };
