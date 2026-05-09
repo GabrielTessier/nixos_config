@@ -2,8 +2,8 @@
 let
   defaultProfiles = {
     mirror = ''
-      monitor=eDP-1,preferred,auto,1
-      monitor=HDMI-A-1,preferred,auto,1,mirror,eDP-1
+      monitor=HDMI-A-1,preferred,auto,1
+      monitor=eDP-1,preferred,auto,1,mirror,HDMI-A-1
     '';
     extended = ''
       monitor=eDP-1,preferred,auto,1

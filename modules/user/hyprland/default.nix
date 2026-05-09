@@ -12,14 +12,14 @@ let
 
   lockCmd =
     if useNoctalia
-    then "noctalia-shell ipc call lockScreen lock"
+    then "noctalia-shell ipc call lockScreen lock || hyprlock"
     else "hyprlock";
 
   sessionCmd =
     if useNoctalia
-    then "noctalia-shell ipc call sessionMenu toggle"
+    then "noctalia-shell ipc call sessionMenu toggle || pkill wlogout || wlogout || hyprctl dispatch exit"
     else (if useWlogout
-          then "pkill wlogout || wlogout"
+          then "pkill wlogout || wlogout || hyprctl dispatch exit"
           else "hyprctl dispatch exit");
 in
 {
