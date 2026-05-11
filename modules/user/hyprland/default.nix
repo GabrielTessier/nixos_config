@@ -199,6 +199,7 @@ in
         gesture = [
           "3, horizontal, workspace"
           "3, up, mod: SUPER, fullscreen, maximize"
+          "3, down, mod: SUPER, fullscreen, minimize"
         ];
 
         dwindle = {
@@ -242,18 +243,6 @@ in
           "$mainMod CTRL, up,    resizeactive,  0 -60"
           "$mainMod CTRL, down,  resizeactive,  0  60"
 
-	        # Switch workspace
-	        "$mainMod, Tab, workspace, m+1"
-	        "$mainMod SHIFT, Tab, workspace, m-1"
-
-          # Scroll through existing workspaces with mainMod + scroll
-          "$mainMod, mouse_down, workspace, e+1"
-          "$mainMod, mouse_up, workspace, e-1"
-
-          # Keyboard backlight
-          "$mainMod, F3, exec, brightnessctl -d *::kbd_backlight set +33%"
-          "$mainMod, F2, exec, brightnessctl -d *::kbd_backlight set 33%-"
-
           # Volume and Media Control
           ", XF86AudioRaiseVolume, exec, pamixer -i 5 "
           ", XF86AudioLowerVolume, exec, pamixer -d 5 "
@@ -268,7 +257,7 @@ in
           #"SHIFT, XF86MonBrightnessUp, exec, ddcutil setvcp 10 $(($(brightnessctl get) * 100 / $(brightnessctl max)))"
           "SHIFT, XF86MonBrightnessDown, exec, ddcutil setvcp 10 - 10"
           "SHIFT, XF86MonBrightnessUp, exec, ddcutil setvcp 10 + 10"
-          "$mainMod, F7, exec, ddcutil setvcp 10 100"
+          "$mainMod SHIFT, F7, exec, ddcutil setvcp 10 100"
 
 
           # Screenshot
@@ -289,19 +278,19 @@ in
         ]
         ++ lib.optionals (spawnEditor != "") [
           "$mainMod, E, exec, ${spawnEditor}"
-        ]
-        ++ (
-          # workspaces
-          # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
-          builtins.concatLists (builtins.genList (i:
-            let ws = i + 1;
-            in [
-              "$mainMod, code:1${toString i}, workspace, ${toString ws}"
-              "$mainMod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
-            ]
-          )
-            9)
-        );
+        ];
+        # ++ (
+        #   # workspaces
+        #   # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
+        #   builtins.concatLists (builtins.genList (i:
+        #     let ws = i + 1;
+        #     in [
+        #       "$mainMod, code:1${toString i}, workspace, ${toString ws}"
+        #       "$mainMod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+        #     ]
+        #   )
+        #     9)
+        # );
 
 
         # Move/resize windows with mainMod + LMB/RMB and dragging
