@@ -97,6 +97,8 @@ let
     text = ''
       ${ribbonLib}
 
+      rm -f /tmp/hypr_ribbon_state
+
       SOCK="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
 
       ${pkgs.socat}/bin/socat -u "UNIX-CONNECT:$SOCK" - | while IFS= read -r line; do
