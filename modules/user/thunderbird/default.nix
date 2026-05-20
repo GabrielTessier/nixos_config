@@ -17,12 +17,27 @@ in {
           "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
         };
         userChrome = ''
-        #threadTree tr[data-properties~="unread"] div {
-          background-color: #1c594c;
+        :root {
+          --new-subject-color: lightgreen !important;
         }
 
-        #threadTree tr[data-properties~="new"] {
-          /*color: green !important;*/
+        /* Remove annoying line on top of selected tab */
+        #tabs-toolbar,
+        #tabs-toolbar:hover {
+          --tabline-color: none !important;
+        }
+
+        .new-messages > .container > .name {
+          color: red !important;
+        }
+
+        #threadTree tr[data-properties~="unread"] div {
+          background-color: #1c594c !important;
+        }
+
+        #threadTree tr[data-properties~="new"] div {
+          background-color: #ac594c !important;
+          color: var(--new-subject-color) !important;
         }
         '';
       };
