@@ -101,10 +101,9 @@ in
           config.userSettings.desktop.startupApps
           ++ [
             "hyprctl setcursor ${config.gtk.cursorTheme.name} ${builtins.toString config.gtk.cursorTheme.size}"
-            "hyprpaper"
             "wl-paste --type text --watch cliphist store"
             "wl-paste --type image --watch cliphist store"
-            "udiskie --tray"
+            #"udiskie --tray"
             #"hypridle"
           ];
 
@@ -352,9 +351,17 @@ in
       brightnessctl
     ]);
     services.hyprpolkitagent.enable = true;
-    services.udiskie.enable = true;
-    services.hyprpaper = {
+    services.udiskie = {
       enable = true;
+      tray = "auto";
+      settings = {
+        program_options = {
+          appindicator = true;
+        };
+      };
+    };
+    services.hyprpaper = {
+      enable = !useNoctalia;
       settings = {
         ipc = "on";
         splash = false;

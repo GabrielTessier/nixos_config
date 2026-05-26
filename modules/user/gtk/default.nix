@@ -10,6 +10,13 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    home.packages = with pkgs; [
+      #adwaita-icon-theme
+      papirus-icon-theme
+      #gnome-icon-theme
+      hicolor-icon-theme
+    ];
+
     gtk = {
       enable = true;
 
