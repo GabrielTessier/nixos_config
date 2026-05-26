@@ -18,6 +18,8 @@ in
       gnumake
       cmake
       gcc
+      clang
+      clang-tools
       rocmPackages.clang
       pkg-config
     ];

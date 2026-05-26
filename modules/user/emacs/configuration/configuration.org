@@ -7,8 +7,16 @@ I use =use-package= to install and configure my packages.
 I should be able to open Emacs for the first time and have my whole environment automatically installed. I'm not /totally/ sure about that, but we're gettin' close.
 
 #+begin_src emacs-lisp
-  ;; (require 'use-package-ensure)
-  ;; (setq use-package-always-ensure t)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t)
+#+end_src
+
+Add =:vc= to =use-package=
+
+#+begin_src emacs-lisp
+    (unless (package-installed-p 'vc-use-package)
+        (package-vc-install "https://github.com/slotThe/vc-use-package"))
+    (require 'vc-use-package)
 #+end_src
 
 Defer loading packages unless explicitly demanded.
@@ -59,6 +67,11 @@ Use [[https://github.com/hrs/sensible-defaults.el][sensible-defaults.el]] for so
 
 * UI preferences
 
+Ask before quit
+#+begin_src emacs-lisp
+  (setq confirm-kill-emacs #'y-or-n-p)
+#+end_src
+
 ** Don't resize the frame
 
 By default, Emacs attempts to resize each frame to maintain a certain number of characters in each line, so this width varies depending on the font used. This operation is a bit expensive, and since I use =hyprland=, a tiling window manager, it's also completely unnecessary, since the frame will be resized differently regardless. Just skip the whole thing instead.
@@ -103,9 +116,7 @@ Add column number
 
 ** Enable smooth scrolling
 
-This is especially nice when I've got a document with embedded images or rendered equations. Or on the rare occasions I use a mouse.
-
-In certain read-only modes I like to bind =J= and =K= to scrolling. That's nice for reading mail or RSS items. This provides a =+bind-scroll-keys= function I can use to enable that for a given key map.
+This is especially nice when I use a mouse.
 
 #+begin_src emacs-lisp
   (pixel-scroll-precision-mode 1)
@@ -124,6 +135,22 @@ In certain read-only modes I like to bind =J= and =K= to scrolling. That's nice 
   (global-set-key (kbd "C-M-<up>") '+scroll-up-some)
   (global-set-key (kbd "C-M-<down>") '+scroll-down-some)
 #+end_src
+
+** Configure a pretty modeline
+
+#+begin_src emacs-lisp
+  (use-package moody
+    :demand t
+
+    :custom
+    (x-underline-at-descent-line t)
+
+    :config
+    (moody-replace-mode-line-buffer-identification)
+    (moody-replace-vc-mode)
+    (moody-replace-eldoc-minibuffer-message-function))
+#+end_src
+
 
 ** Load up a theme
 
@@ -253,11 +280,11 @@ Use =corfu= for a pop-up completions menu.
     (tab-always-indent 'complete)
     (corfu-auto t)
     (corfu-cycle t)
-  	(corfu-on-exact-match 'insert)
-    ;;(corfu-preselect 'prompt)
+    (corfu-on-exact-match 'insert)
+    (corfu-preselect 'prompt)
 
-    ;; :init
-    ;; (global-corfu-mode))
+    :init
+    (global-corfu-mode))
 #+end_src
 
 ** =ediff=
@@ -312,12 +339,36 @@ When using =ediff= to compare file, show files side by side and don't split the 
     :ensure t)
 #+end_src
 
+** =project.el=
+
+- Bind searching within the project to =C-c v=.
+- Treat a directory containing =.dir-locals.el= as a project root (useful for projects not under version control).
+- When I switch projects, just open a =dired= buffer at the project root rather than asking whether I want to open a file, search, etc.
+
+#+begin_src emacs-lisp
+  (use-package deadgrep
+    :ensure t)
+
+  (use-package project
+    :ensure t
+    :bind (("C-c v" . deadgrep)
+           ("C-x p p" . +project-switch-project))
+
+    :custom
+    (project-vc-extra-root-markers '(".dir-locals.el"))
+
+    :config
+    (defun +project-switch-project (dir)
+      (interactive (list (project-prompt-project-dir)))
+      (dired dir)))
+#+end_src
+
 * Programming environments
 
 Tabs are displayed as 8 characters by default. This reduces that.
 
 #+begin_src emacs-lisp
-  (setq-default tab-width 2)
+  (setq-default tab-width 4)
 #+end_src
 
 Treating terms in CamelCase symbols as separate words makes editing a little easier for me, so I like to use =subword-mode= everywhere.
@@ -344,32 +395,37 @@ Compilation output goes to the =*compilation*= buffer. I rarely have that window
 
 ** =lsp-mode=
 
+FIXME :
 I'm using =lsp-mode= to manage my LSP servers.
+change to eglot
 
 #+begin_src emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :defer t
-    :hook ((lsp-mode . lsp-enable-which-key-integration)
-  	 (lsp-mode . (lambda ()
-  		       (let ((lsp-keymap-prefix "C-c l"))
-  			 (lsp-enable-which-key-integration)))))
-    ;; :init
-    ;; (setq lsp-keep-workspace-alive nil
-    ;; 			lsp-signature-doc-lines 5
-    ;; 			lsp-idle-delay 0.5
-    ;; 			lsp-prefer-capf t)
-    :config
-    (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)))
+  ;; (use-package lsp-mode
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :hook ((lsp-mode . lsp-enable-which-key-integration)
+  ;; 	 (lsp-mode . (lambda ()
+  ;; 		       (let ((lsp-keymap-prefix "C-c l"))
+  ;; 			 (lsp-enable-which-key-integration)))))
+  ;;   ;; :init
+  ;;   ;; (setq lsp-keep-workspace-alive nil
+  ;;   ;; 			lsp-signature-doc-lines 5
+  ;;   ;; 			lsp-idle-delay 0.5
+  ;;   ;; 			lsp-prefer-capf t)
+  ;;   :config
+  ;;   (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)))
 #+end_src
 
-** Debug Adapter Protocol
+** =eglot=
+I'm using the built-in =eglot= to manage my LSP servers.
 
 #+begin_src emacs-lisp
-  (use-package dap-mode
+  (use-package eglot
     :ensure t
-    :after lsp-mode
-    :config (dap-auto-configure-mode))
+    :hook (((c-mode) . eglot-ensure))
+    :config
+    (defun +eglot-format-buffer-on-save ()
+      (add-hook 'before-save-hook #'eglot-format-buffer -10 t)))
 #+end_src
 
 ** =direnv=
@@ -420,17 +476,6 @@ Add syntax highlighting to =cron= files.
     :ensure t)
 #+end_src
 
-** eglot
-
-#+begin_src emacs-lisp
-  (use-package eglot
-    :ensure t
-    :hook (((c-mode) . eglot-ensure))
-    :config
-    (defun +eglot-format-buffer-on-save ()
-      (add-hook 'before-save-hook #'eglot-format-buffer -10 t)))
-#+end_src
-
 ** CSS & Sass
 
 Indent by 2 spaces.
@@ -439,7 +484,7 @@ Indent by 2 spaces.
   (use-package css-mode
     :ensure t
     :config
-    (setq css-indent-offset 2))
+    (setq css-indent-offset 4))
 #+end_src
 
 Don't compile the current SCSS file every time I save.
@@ -451,6 +496,23 @@ Don't compile the current SCSS file every time I save.
     (setq scss-compile-at-save nil))
 #+end_src
 
+** JavaScript & TypeScript
+
+Use LSP with JS.
+
+#+begin_src emacs-lisp
+  (use-package js-mode
+    :ensure nil
+    :hook (js-mode . eglot-ensure))
+#+end_src
+
+Browse JSON documents hierarchically with =json-navigator-navigate-after-point=.
+
+#+begin_src emacs-lisp
+  (use-package json-navigator
+    :commands (json-navigator-navigate-after-point))
+#+end_src
+
 ** Java
 
 Use LSP with java.
@@ -460,16 +522,9 @@ Use LSP with java.
   (use-package eldoc-box
     :ensure t)
 
-  (use-package lsp-java
-    :ensure t
-    :config (add-hook 'java-mode-hook 'lsp))
-
-  (use-package dap-java)
-    ;; :ensure t)
-
   (use-package java-mode
     ;; :ensure t
-    :hook (java-mode . lsp))
+    :hook (java-mode . eglot-ensure))
 
   (defun tkj/default-code-style-hook()
     (setq c-basic-offset 2
@@ -606,7 +661,7 @@ Configure Merlin. This also requires installing the Merlin package through OPAM 
 #+begin_src emacs-lisp
   (use-package python-mode
     :ensure t
-    :hook (python-mode . lsp))
+    :hook (python-mode . eglot-ensure))
 #+end_src
 
 Enable =elpy=. This provides automatic indentation, auto-completion, syntax checking, etc. Use the =python3= interpreter for eldoc.
@@ -630,6 +685,15 @@ Format code according to PEP8 on save:
     :ensure t
     :after python-mode
     :hook (elpy-mode-hook . py-autopep8-enable-on-save))
+#+end_src
+
+** Rust
+
+#+begin_src emacs-lisp
+  (use-package rust-mode
+    :hook (rust-mode . eglot-ensure))
+
+  (add-hook 'rust-mode-hook #'+eglot-format-buffer-on-save)
 #+end_src
 
 ** Shell
@@ -675,7 +739,7 @@ I'd like to see colors with =rainbow-mode=, so we'll need to install that, too:
 #+begin_src emacs-lisp
   (use-package nix-mode
     :ensure t
-    :hook (nix-mode . lsp))
+    :hook (nix-mode . eglot-ensure))
 #+end_src
 
 * Terminal
@@ -727,10 +791,8 @@ Including =org-tempo= restores the =<s=-style easy templates that were deprecate
 
 ** =TeX= configuration
 
-I rarely write =LaTeX= directly any more, but I often export through it with =Org=, so I'm keeping them together.
-
-- Automatically parse the file after loading it.
-- Enable a minor mode for dealing with math (it adds a few useful keybindings), and always treat the current file as the "main" file. That's intentional, since I'm usually actually in an org document.
+Automatically parse the file after loading it.
+Enable a minor mode for dealing with math (it adds a few useful keybindings), and always treat the current file as the "main" file. That's intentional.
 
 #+begin_src emacs-lisp
   (use-package auctex
