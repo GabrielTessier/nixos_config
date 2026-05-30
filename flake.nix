@@ -42,6 +42,13 @@
       lib = inputs.nixpkgs.lib;
       hosts = builtins.filter (x: x != null) (lib.mapAttrsToList (name: value: if (value == "directory") then name else null) (builtins.readDir ./hosts));
     in {
+
+      nixosModules = {
+        iso = import ./iso {
+          disko = inputs.disko;
+        };
+      };
+      
       nixosConfigurations = builtins.listToAttrs
         (map (host: {
           name = host;
@@ -74,6 +81,20 @@
               hostname = host;
             };
           };
-        }) hosts);
+        }) hosts)
+      // {
+        nixos-installer = inputs.nixpkgs.lib.nixosSystem {
+          specialArgs = {
+            inherit self;
+          };
+          modules = [
+            self.nixosModules.iso
+          ];
+        };
+      };
+
+      packages.x86_64-linux = {
+        iso = self.nixosConfigurations.nixos-installer.config.system.build.isoImage;
+      };
     };
 }

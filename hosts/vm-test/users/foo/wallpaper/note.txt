@@ -1,0 +1,4 @@
+
+ln -s blurred_wallpaper_dark.png blurred_wallpaper.png
+ln -s square_wallpaper_dark.png square_wallpaper.png
+ln -s wallpaper_dark.png wallpaper.png

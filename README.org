@@ -20,3 +20,14 @@ Set the =nix-folder= in [[./flake.nix][flake.nix]] (the result of =pwd=)
 Configure your hosts in [[./hosts][hosts]].
 
 Rebuild your system : =sudo nixos-rebuild switch --flake /path/to/this/folder=
+
+** Iso
+
+You can generate an iso with =nix build .#iso=
+
+Install iso on a usb key : =sudo dd if=result/iso/*.iso of=/dev/sdX bs=4M status=progress=
+
+After booting run =install-host=
+
+For default install (recommended) just select the default option each time (press enter)
+
