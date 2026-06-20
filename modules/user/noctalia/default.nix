@@ -233,11 +233,6 @@ in {
           randomIntervalSec = 300;
           transitionDuration = 1500;
           transitionType = [
-            "fade"
-            "disc"
-            "stripes"
-            "wipe"
-            "pixelate"
             "honeycomb"
           ];
           skipStartupTransition = false;
